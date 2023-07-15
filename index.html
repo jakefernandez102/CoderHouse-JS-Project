@@ -47,7 +47,11 @@
                 </div>
                 
                 <div class="section__image">
-                    <img src="src/img/hero_image.jpg" alt="">
+                    <picture>
+                        <source srcset="build/img/hero_image.webp" type="image/webp">
+                        <source srcset="build/img/hero_image.avif" type="image/avif">
+                        <img loading="lazy" src="build/img/hero_image.jpg" alt="Image announcement 1">
+                    </picture>
                 </div>
 
                 <div class="section__info">
