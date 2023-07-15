@@ -74,18 +74,29 @@
 
         <main class="soucers">
             <div class="soucer__img">
-                <img src="build/img/platillo1.PNG" alt="imagen platillo">
+                <picture>
+                <source srcset="build/img/platillo1.webp" type="image/webp">
+                <source srcset="build/img/platillo1.avif" type="image/avif">
+                <img loading="lazy" src="build/img/platillo1.PNG" alt="Image announcement 1">
+                </picture>
             </div>
             
             <div class="soucer__img">
-                <img src="build/img/platillo2.PNG" alt="imagen platillo">
+                <picture>
+                    <source srcset="build/img/platillo2.webp" type="image/webp">
+                    <source srcset="build/img/platillo2.avif" type="image/avif">
+                    <img loading="lazy" src="build/img/platillo2.PNG" alt="Image announcement 1">
+                </picture>
             </div>
             
             <div class="soucer__img">
-                <img src="build/img/platillo3.PNG" alt="">
+                <picture>
+                    <source srcset="build/img/platillo3.webp" type="image/webp">
+                    <source srcset="build/img/platillo3.avif" type="image/avif">
+                    <img loading="lazy" src="build/img/platillo3.PNG" alt="Image announcement 1">
+                </picture>
             </div>
         </main>
-
         <!-- Modal bootstrap -->
 
         <div class="modal fade " id="signUp" tabindex="-1" aria-labelledby="signUpLabel" aria-hidden="true">
