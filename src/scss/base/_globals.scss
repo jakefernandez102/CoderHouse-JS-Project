@@ -1,0 +1,36 @@
+@use "base/variables" as v;
+
+html {
+    box-sizing: border-box;
+    font-size: 62.5%; /* 1 rem = 10px*/
+}
+*,
+*:before,
+*:after {
+    box-sizing: inherit;
+}
+body {
+    font-size: 1.6rem;
+    background-color: #b5c99a;
+    font-family: v.$fuente_principal;
+    color: v.$primario;
+}
+.background-dark {
+    background-color: v.$gris-oscuro;
+    max-width: 95%;
+    margin: 0 auto;
+    border-radius: 1rem;
+    min-height: 95vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.container {
+    max-width: 95%;
+    margin: 0 auto;
+    padding: 2rem;
+}
+img {
+    display: block;
+    width: 100%;
+}
