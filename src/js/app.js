@@ -1,8 +1,13 @@
+import { validateUser } from "./Auth/auth.js";
+import { formatMoney } from "./helpers/formater.js";
+import { generateNewId } from "./helpers/idGenerator.js";
+
 alert( `
 Hello! \n 
 Welcome to Mon-Key Restaurant! 
         
 Here you will be able to sell your delicious food or buy our tasty and different products.`);
+
 
 const name = prompt( 'Please introduce your FULL name here:' );
 
@@ -15,6 +20,12 @@ let password = '';
 let productName = '';
 let productPrice = '';
 let productQuantity = '';
+
+let userProfiles = [];
+let userProfile = {};
+
+let productsPerUser = [];
+let productPerUser = {};
 
 const setRoll = function ( name = '' )
 {
@@ -93,14 +104,29 @@ We are here for and with you every time :), good luck.`);
 
 function createProfile ()
 {
-
     if ( userRoll === '1' )
     {
         restaurantName = prompt( "Insert your restaurant's name:" ).toLowerCase();
+        userProfile.restaurantName;
     }
     phoneNumber = prompt( 'Insert your phone number:' ).toLowerCase();
     email = prompt( 'Insert your email:' ).toLowerCase();
     password = prompt( 'Insert your password:' ).toLowerCase();
+
+    userProfile = {
+        ...userProfile,
+        id: generateNewId(),
+        userRoll,
+        name,
+        phoneNumber,
+        email,
+        password
+    };
+
+    if ( userProfile )
+    {
+        userProfiles = [...userProfiles, userProfile];
+    }
 
     alert( `
     Excellent, your profile has been created successfully as:
@@ -108,23 +134,34 @@ function createProfile ()
     Restaurant Name: ${ restaurantName }
     Phone Number: ${ phoneNumber }
     Email: ${ email }` );
-}
 
+    alert( `
+Now let's SigIn
+    `);
 
-if ( userRoll === '1' )
-{
-    let addProductOption = prompt( 'Do you want to add product \n Y. Yes \n N. No' ).toLowerCase();
-    while ( addProductOption !== 'y' && addProductOption !== 'n' )
+    if ( validateUser( userProfile ) )
     {
-        alert( "Add a valid option" );
-        addProductOption = prompt( 'Do you want to add product \n Y. Yes \n N. No' ).toLowerCase();
-    }
-    addProductOption === 'y' ? addProduct() : alert( 'You can come whenever you want :)' );
+        alert( 'You are signed in.' );
+
+        if ( userRoll === '1' )
+        {
+            let addProductOption = prompt( 'Do you want to add product \n Y. Yes \n N. No' ).toLowerCase();
+            while ( addProductOption !== 'y' && addProductOption !== 'n' )
+            {
+                alert( "Add a valid option" );
+                continue;
+            }
+            addProductOption === 'y' ? addProduct() : alert( 'You can come whenever you want :)' );
+        }
+    };
 }
+
+
 
 function addProduct ()
 {
     let addOther = 'y';
+
 
     while ( addOther === 'y' )
     {
@@ -133,34 +170,70 @@ function addProduct ()
         productQuantity = prompt( "Insert the product's quantity:" ).toLowerCase();
         if ( isNaN( productPrice ) || isNaN( productQuantity ) )
         {
-            alert( 'Product name and Product quantity must be number' );
+            alert( 'Product price and Product quantity must be a number' );
             addProduct();
             return;
         }
-        printCalculation( productPrice, productQuantity );
+
+        productPerUser = {
+            id: generateNewId(),
+            productName,
+            productPrice,
+            productQuantity,
+            userId: userProfile.id
+        };
+
+        productsPerUser = [...productsPerUser, productPerUser];
+
+        printCalculation();
+
         addOther = prompt( "Do you want to add another product? \n Y.Yes \n N.No" ).toLowerCase();
-        if ( addOther === 'n' )
+        while ( addOther !== 'y' || addOther !== 'n' )
         {
-            alert( 'Thank you for visiting us!' );
-        } else
-        {
-            addOther = prompt( "Do you want to add another product? \n Y.Yes \n N.No" ).toLowerCase();
+            if ( addOther === 'n' )
+            {
+                alert( 'Thank you for visiting us!' );
+                return;
+
+            } else if ( addOther === 'y' )
+            {
+                addProduct();
+                return;
+            } else
+            {
+                alert( 'Please add a valid option' );
+                addOther = prompt( "Do you want to add another product? \n Y.Yes \n N.No" ).toLowerCase();
+                continue;
+            }
         }
     }
 }
 
-function printCalculation ( productPrice, productQuantity )
+function printCalculation ()
 {
-    const totalCharged = ( ( productPrice * productQuantity ) * 1.1 ) - ( productPrice * productQuantity );
-    const totalToSell = ( productPrice * productQuantity );
-    const finalRevenue = ( productPrice * productQuantity ) - totalCharged;
-    alert( `
-Please remember that we will charge 10% of every sell:
-i.e if you sell the whole stock of your product this will be the calculation:
+    let totalCharged;
+    let totalToSell;
+    let finalRevenue;
 
-Our fee (10%) = ₡${ totalCharged }
-Total to Sell= ₡${ totalToSell }
-Total Revenue = ₡${ finalRevenue }
-` );
+    alert( 'You will see the list of products and calculations' );
+    productsPerUser.forEach( product =>
+    {
+        totalCharged = ( ( product.productPrice * product.productQuantity ) * 1.1 ) - ( product.productPrice * product.productQuantity );
+        totalToSell = ( product.productPrice * product.productQuantity );
+        finalRevenue = ( product.productPrice * product.productQuantity ) - totalCharged;
 
+
+        alert( `
+        product: ${ JSON.stringify( product ) }
+        
+        Please remember that we will charge 10% of every sell:
+        i.e if you sell the whole stock of your product this will be the calculation:
+    
+        Our fee (10%) = ${ formatMoney( totalCharged ) }
+        Total to Sell= ${ formatMoney( totalToSell ) }
+        Total Revenue = ${ formatMoney( finalRevenue ) }
+        ` );
+    } );
+    console.log( productsPerUser );
 };
+
