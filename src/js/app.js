@@ -347,4 +347,15 @@ function showRestaurants ()
 function showProductsOfRestaurant ( productsOfSelectedRestaurant )
 {
     alert( 'Here are all the options that this restaurant offers: \n ' + JSON.stringify( productsOfSelectedRestaurant ) );
+
+    const wantToContinue = prompt( 'Do you want to continue? \n Y. Yes \n N. No' ).toLocaleLowerCase();
+
+    if ( wantToContinue === 'y' )
+    {
+        login();
+    } else
+    {
+        login();
+
+    }
 };
