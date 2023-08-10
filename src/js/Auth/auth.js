@@ -1,12 +1,25 @@
-export function validateUser ( user )
+export function validateUser ( user = [] )
 {
-    const { email, password } = user;
+
+    let validated = false;
+    if ( !user.length === 0 )
+    {
+        return validated;
+    }
 
     const emailInput = prompt( 'Please insert the email you have used while signing up.' );
     const passwordInput = prompt( 'Please insert the password you have used while signing up.' );
 
+    const validatedUser = user.filter( _user => _user.email === emailInput );
+    console.log( JSON.stringify( validatedUser ) );
+    const { email, password } = validatedUser[0];
 
-    if ( [emailInput, passwordInput].includes( '' ) )
+    if ( !validatedUser )
+    {
+        alert( 'User does not exists' );
+        validateUser( user );
+
+    } else if ( [emailInput, passwordInput].includes( '' ) )
     {
         alert( 'All the fields are required' );
         validateUser( user );
@@ -15,6 +28,7 @@ export function validateUser ( user )
         alert( 'email or password does not exist' );
         validateUser( user );
     }
-    return true;
+
+    return validatedUser[0];
 
 }
