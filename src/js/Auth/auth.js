@@ -10,22 +10,33 @@ export function validateUser ( user = [] )
     const emailInput = prompt( 'Please insert the email you have used while signing up.' );
     const passwordInput = prompt( 'Please insert the password you have used while signing up.' );
 
-    const validatedUser = user.filter( _user => _user.email === emailInput );
+    const validatedUser = user?.filter( _user => _user.email === emailInput );
     console.log( JSON.stringify( validatedUser ) );
-    const { email, password } = validatedUser[0];
 
     if ( !validatedUser )
     {
-        alert( 'User does not exists' );
+        const exit = prompt( 'User does not exists \n X to exit' ).toLocaleLowerCase();
+        if ( exit === 'x' )
+        {
+            return;
+        }
         validateUser( user );
 
     } else if ( [emailInput, passwordInput].includes( '' ) )
     {
-        alert( 'All the fields are required' );
+        const exit = prompt( 'All the fields are required \n X to exit' ).toLocaleLowerCase();
+        if ( exit === 'x' )
+        {
+            return;
+        }
         validateUser( user );
-    } else if ( emailInput !== email || password !== passwordInput )
+    } else if ( emailInput !== validatedUser[0]?.email || validatedUser[0]?.password !== passwordInput )
     {
-        alert( 'email or password does not exist' );
+        const exit = prompt( 'email or password does not exist \n X to exit' ).toLocaleLowerCase();
+        if ( exit === 'x' )
+        {
+            return;
+        }
         validateUser( user );
     }
 

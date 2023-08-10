@@ -119,6 +119,7 @@ function validateContract ()
         Great!!
         Awesome, you have accepted the term, now we are going to create your profile`);
         createProfile();
+        return;
     } else
     {
         alert( `
@@ -127,7 +128,7 @@ function validateContract ()
         
         However, we would like you to know that you can come with us whenever you want in case you change your thoughts about this.
         We are here for and with you every time :), good luck.`);
-
+        return;
     }
 }
 validateContract();
@@ -189,9 +190,11 @@ function signIn ()
                 continue;
             }
             addProductOption === 'y' ? addProduct() : alert( 'You can come whenever you want :)' );
+            return;
         } else if ( actualUser.userRoll === '2' )
         {
             addOrder();
+            return;
         }
     };
 }
@@ -234,6 +237,7 @@ function addProduct ()
                 const goMainMenu = prompt( 'Do you want to go to the main menu? \n Y. Yes \n N. No' ).toLocaleLowerCase();
                 if ( goMainMenu === 'n' )
                 {
+                    login();
                     return;
                 } else
                 {
@@ -306,6 +310,7 @@ function addOrder ()
             addOrder();
             return;
         }
+
     }
 
 
