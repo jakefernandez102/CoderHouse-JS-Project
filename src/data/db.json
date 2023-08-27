@@ -1,0 +1,86 @@
+{
+  "users": [
+    {
+      "fullName": "Jake Fernandez",
+      "phoneNumer": "86729738",
+      "rol": 1,
+      "email": "jake.fernandez@amadeus.com",
+      "password": "1234567",
+      "token": "8i52vi6mir1h8skpkgi",
+      "restaurants": [
+        {
+          "id": "oql8d7h0er81h8skprab",
+          "name": "Jake MonkeysBurguer",
+          "products": [
+            {
+              "id": "3r4am0acdh81h8sks0n5",
+              "name": "burguer cheese",
+              "price": "1500",
+              "quantity": "50"
+            },
+            {
+              "id": "ff099gh8sug1h8skslpt",
+              "name": "burguer double-cheese",
+              "price": "2500",
+              "quantity": "50"
+            }
+          ]
+        },
+        {
+          "id": "7oq1lebbhf1h8skt0mr",
+          "name": "Jake drinkies",
+          "products": [
+            {
+              "id": "9c6ppj899q1h8sktg1v",
+              "name": "deik -vodka",
+              "price": "1200",
+              "quantity": "100"
+            }
+          ]
+        },
+        {
+          "id": "a8hvaggpqro1h8sku86f",
+          "name": "Jake Monkeyscream",
+          "products": [
+            {
+              "id": "fjksjlpbf281h8skuroh",
+              "name": "Chocolate scream",
+              "price": "1300",
+              "quantity": "250"
+            }
+          ]
+        }
+      ],
+      "id": 1
+    },
+    {
+      "fullName": "Juank",
+      "phoneNumer": "8672873821",
+      "rol": 2,
+      "email": "juank@hotmail.com",
+      "password": "1234567",
+      "token": "gab78u0ib4o1h8skv92n",
+      "orders": [
+        {
+          "id": "a60rggmtst81h8skvelo",
+          "name": "deik -vodka",
+          "price": "1200",
+          "quantity": "100"
+        },
+        {
+          "id": "r0mdh7ak0f1h8sl06nk",
+          "name": "Chocolate scream",
+          "price": "1300",
+          "quantity": "250"
+        },
+        {
+          "id": "7hqn0tb3id81h8slubee",
+          "name": "burguer double-cheese",
+          "price": "2500",
+          "quantity": "50"
+        }
+      ],
+      "id": 2
+    }
+  ]
+}

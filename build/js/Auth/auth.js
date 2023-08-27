@@ -26,7 +26,7 @@ export async function getUsersList ()
 {
     try
     {
-        const response = await fetch( `${ process.env.DB_USERS_URL }/users` );
+        const response = await fetch( `${ "https://db-coderhouse-project.onrender.com" }/users` );
         const data = await response.json();
         users = await data;
 
@@ -96,7 +96,7 @@ const createUser = async ( user, requestedForm ) =>
     }
     try
     {
-        await fetch( `${ process.env.DB_USERS_URL }/users`, {
+        await fetch( `${ "https://db-coderhouse-project.onrender.com" }/users`, {
             method: 'POST',
             body: JSON.stringify( userToCreate ), // data can be `string` or {object}!
             headers: {

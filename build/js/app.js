@@ -105,7 +105,7 @@ async function getActualUser ( userToken )
 {
     try
     {
-        const response = await fetch( `${ process.env.DB_USERS_URL }/users/?token=${ userToken }` );
+        const response = await fetch( `${ "https://db-coderhouse-project.onrender.com" }/users/?token=${ userToken }` );
         actualUser = await response.json();
         return actualUser;
     } catch ( error )
