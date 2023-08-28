@@ -6,9 +6,6 @@ let restaurantForm = null;
 let productForm = null;
 let restaurantInput = '';
 let selectRestaurantInput = '';
-let deleteButton = '';
-let editButton = '';
-
 let user = {};
 let users = [];
 let token = '';
@@ -43,23 +40,12 @@ export async function generateScript ()
     }, false );
 }
 
-function generateTableContent ( deleteProduct = false )
+function generateTableContent ()
 {
-    const tableElement = document.querySelector( '.table-products' );
-    const tableHead = document.createElement( 'THEAD' );
-    const tableBody = document.createElement( 'TBODY' );
-    tableHead.classList.add( 'table-head' );
-    tableBody.classList.add( 'table-body' );
-    if ( tableElement && deleteProduct )
-    {
-        const tableHeadElement = document.querySelector( '.table-head' );
-        const tableBodyElement = document.querySelector( '.table-body' );
-
-        tableElement.removeChild( tableHeadElement );
-        tableElement.removeChild( tableBodyElement );
-    }
     const productsTable = document.querySelector( '#products-table' );
 
+    const tableHead = document.createElement( 'THEAD' );
+    const tableBody = document.createElement( 'TBODY' );
     let tr = null;
     let td = null;
 
@@ -70,7 +56,6 @@ function generateTableContent ( deleteProduct = false )
             <th scope="col">Product Price</th>
             <th scope="col">Product Quantity</th>
             <th scope="col">Restaurant</th>
-            <th scope="col">Actions</th>
         </tr>
     `;
 
@@ -85,18 +70,18 @@ function generateTableContent ( deleteProduct = false )
                 <td>${ formatMoney( parseInt( product.price ) ) }</td>
                 <td>${ product.quantity }</td>
                 <td>${ restaurant.name }</td>
-                <td class="flex gap-2">
-                    <button class=" delete-button text-danger bg-transparent"  type="button" data-product-id="${ product.id }" data-restaurant-id="${ restaurant.id }">Delete </button>  
-                    <button class=" edit-button text-warning  bg-transparent" data-bs-toggle="modal" data-bs-target="#signUp" type="button" data-product-id="${ product.id }" data-restaurant-id="${ restaurant.id }">Edit </button>  
-                </td>
             `;
             tableBody.appendChild( tr );
-            tr.addEventListener( 'click', deleteEditProduct, false );
         } );
     } );
 
     productsTable.appendChild( tableHead );
     productsTable.appendChild( tableBody );
+
+
+
+
+
 }
 
 export async function validateRestaurant ( e, restaurantInput )
@@ -193,61 +178,9 @@ async function addProductToRestaurant ()
             .catch( ( error ) => console.error( "Error:", error ) )
             .then( ( response ) => console.log( "Success:", response ) );
         printAlert( 'restaurantForm', 'Restaurant added successfully!!', false );
-        generateTableContent( true );
-    } catch ( error )
-    {
-        console.log( error );
-    }
-};
-
-function deleteEditProduct ( e )
-{
-    if ( e.target.classList.contains( 'delete-button' ) )
-    {
-        deleteProduct( {
-            productId: e.target.attributes['data-product-id'].value,
-            restaurantId: e.target.attributes['data-restaurant-id'].value
-        } );
-    } else
-    {
-        editProduct();
-    }
-};
-
-async function deleteProduct ( { productId, restaurantId } )
-{
-    let restaurantSelected = user?.restaurants?.find( restaurant => restaurant.id === restaurantId );
-    user?.restaurants?.forEach( ( restaurant ) =>
-    {
-        if ( restaurant.id === restaurantSelected.id )
-        {
-            const updatedProducts = restaurantSelected?.products?.filter( product => product.id !== productId );
-            console.log( updatedProducts );
-            restaurant.products = [...updatedProducts];
-        }
-    } );
-
-    try
-    {
-        await fetch( `${ "https://db-coderhouse-project.onrender.com" }/users/${ user.id }`, {
-            method: 'PUT',
-            body: JSON.stringify( user ), // data can be `string` or {object}!
-            headers: {
-                "Content-Type": "application/json",
-            },
-            redirect: 'manual'
-        } ).then( ( res ) => res.json() )
-            .catch( ( error ) => console.error( "Error:", error ) )
-            .then( ( response ) => console.log( "Success:", response ) );
-        generateTableContent( true );
     } catch ( error )
     {
         console.log( error );
     }
 
-
-}
-function editProduct ()
-{
-
-}
+};
