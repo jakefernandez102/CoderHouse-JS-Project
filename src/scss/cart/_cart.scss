@@ -1,0 +1,12 @@
+.cart-li {
+    width: 100%;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px dotted gray;
+    padding: 1rem;
+    .cart-img {
+        width: 15%;
+    }
+}

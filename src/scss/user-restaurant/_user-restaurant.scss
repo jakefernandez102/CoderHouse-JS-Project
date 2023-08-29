@@ -1,0 +1,47 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+.user-restaurant-header {
+    background-color: #333;
+    color: #fff;
+    padding: 10px 0;
+    text-align: center;
+}
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+.restaurant-form,
+.product-form {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-bottom: 20px;
+    color: #333;
+}
+.form-group {
+    margin-bottom: 10px;
+}
+label {
+    display: block;
+    font-weight: bold;
+}
+input[type="text"],
+input[type="number"] {
+    width: 100%;
+    padding: 5px;
+}
+button {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+.toggle-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 5rem;
+}

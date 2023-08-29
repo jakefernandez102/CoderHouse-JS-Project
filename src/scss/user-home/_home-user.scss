@@ -1,0 +1,47 @@
+@use "base/variables" as v;
+
+.user-home-header {
+    background-color: #333;
+    color: #fff;
+    padding: 10px 0;
+    text-align: center;
+    border-radius: 1rem;
+}
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+.order-list {
+    list-style: none;
+    padding: 0;
+    color: #333;
+}
+.order-item {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.li-Cart {
+    position: relative;
+    cursor: pointer;
+}
+.cart {
+    width: 2.5rem;
+}
+.cart-number {
+    height: 1.2rem;
+    width: 1.2rem;
+    background-color: red;
+    position: absolute;
+    top: -0.5rem;
+    left: 1.5rem;
+    border-radius: 50%;
+    text-align: center;
+    font-size: 1rem;
+}

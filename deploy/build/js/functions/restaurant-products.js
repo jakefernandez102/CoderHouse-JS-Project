@@ -6,6 +6,9 @@ let restaurantForm = null;
 let productForm = null;
 let restaurantInput = '';
 let selectRestaurantInput = '';
+let deleteButton = '';
+let editButton = '';
+
 let user = {};
 let users = [];
 let token = '';
@@ -24,8 +27,8 @@ export async function generateScript ()
     selectRestaurantInput = document.querySelector( '#select-restaurant' );
 
     productForm = document.querySelector( '.product-form' );
-    fillSelectRestaurant();
 
+    fillSelectRestaurant();
     generateTableContent();
 
     restaurantForm.addEventListener( 'submit', ( e ) =>
@@ -37,15 +40,27 @@ export async function generateScript ()
     {
         e.preventDefault();
         addProductToRestaurant();
+        e.target.reset();
     }, false );
 }
 
-function generateTableContent ()
+function generateTableContent ( deleteProduct = false )
 {
-    const productsTable = document.querySelector( '#products-table' );
-
+    const tableElement = document.querySelector( '.table-products' );
     const tableHead = document.createElement( 'THEAD' );
     const tableBody = document.createElement( 'TBODY' );
+    tableHead.classList.add( 'table-head' );
+    tableBody.classList.add( 'table-body' );
+    if ( tableElement && deleteProduct )
+    {
+        const tableHeadElement = document.querySelector( '.table-head' );
+        const tableBodyElement = document.querySelector( '.table-body' );
+
+        tableElement.removeChild( tableHeadElement );
+        tableElement.removeChild( tableBodyElement );
+    }
+    const productsTable = document.querySelector( '#products-table' );
+
     let tr = null;
     let td = null;
 
@@ -56,6 +71,7 @@ function generateTableContent ()
             <th scope="col">Product Price</th>
             <th scope="col">Product Quantity</th>
             <th scope="col">Restaurant</th>
+            <th scope="col">Actions</th>
         </tr>
     `;
 
@@ -66,22 +82,25 @@ function generateTableContent ()
             tr = document.createElement( 'TR' );
             tr.innerHTML = `
 
-                <td>${ product.name }</td>
+                <td>
+                    ${ product.name }
+                    <span class="fs-6 fw-lighter d-block">${ product.detail }</span>
+                </td>
                 <td>${ formatMoney( parseInt( product.price ) ) }</td>
                 <td>${ product.quantity }</td>
                 <td>${ restaurant.name }</td>
+                <td class="flex gap-2">
+                    <button class=" delete-button text-danger bg-transparent"  type="button" data-product-id="${ product.id }" data-restaurant-id="${ restaurant.id }">Delete </button>  
+                    <button class=" edit-button text-warning  bg-transparent" data-bs-toggle="collapse" data-bs-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2" type="button" data-product-id="${ product.id }" data-restaurant-id="${ restaurant.id }">Edit </button>  
+                </td>
             `;
             tableBody.appendChild( tr );
+            tr.addEventListener( 'click', deleteEditProduct, false );
         } );
     } );
 
     productsTable.appendChild( tableHead );
     productsTable.appendChild( tableBody );
-
-
-
-
-
 }
 
 export async function validateRestaurant ( e, restaurantInput )
@@ -120,7 +139,14 @@ export async function addRestaurant ( user, restaurantInput )
         } ).then( ( res ) => res.json() )
             .catch( ( error ) => console.error( "Error:", error ) )
             .then( ( response ) => console.log( "Success:", response ) );
+
         printAlert( 'restaurantForm', 'Restaurant added successfully!!', false );
+
+        setTimeout( () =>
+        {
+            window.location.href = '/user-restaurant';
+        }, 3000 );
+
     } catch ( error )
     {
         console.log( error );
@@ -148,11 +174,11 @@ async function fillSelectRestaurant ()
 async function addProductToRestaurant ()
 {
 
-    const productNameInput = document.querySelector( '#product-name' ).value;
-    const productPriceInput = document.querySelector( '#product-price' ).value;
-    const productQuantityInput = document.querySelector( '#product-quantity' ).value;
-
-    if ( [productNameInput, productPriceInput, productQuantityInput].includes( '' ) || selectRestaurantInput.value === '0' )
+    let productNameInput = document.querySelector( '#product-name' );
+    let productDetailInput = document.querySelector( '#product-detail' );
+    let productPriceInput = document.querySelector( '#product-price' );
+    let productQuantityInput = document.querySelector( '#product-quantity' );
+    if ( [productNameInput.value, productDetailInput.value, productPriceInput.value, productQuantityInput.value].includes( '' ) || selectRestaurantInput.value === '0' )
     {
         printAlert( 'product-form', 'All fields are required' );
         return;
@@ -164,7 +190,7 @@ async function addProductToRestaurant ()
     }
 
     const restaurantToAddProduct = user?.restaurants?.filter( restaurant => restaurant.id === selectRestaurantInput.value )[0];
-    restaurantToAddProduct.products.push( { id: generateNewId(), name: productNameInput, price: productPriceInput, quantity: productQuantityInput } );
+    restaurantToAddProduct.products.push( { id: generateNewId(), name: productNameInput.value, detail: productDetailInput.value, price: productPriceInput.value, quantity: productQuantityInput.value } );
 
     try
     {
@@ -177,10 +203,82 @@ async function addProductToRestaurant ()
         } ).then( ( res ) => res.json() )
             .catch( ( error ) => console.error( "Error:", error ) )
             .then( ( response ) => console.log( "Success:", response ) );
-        printAlert( 'restaurantForm', 'Restaurant added successfully!!', false );
+        printAlert( 'product-form', 'Product added successfully!!', false );
+
+        generateTableContent( true );
+    } catch ( error )
+    {
+        console.log( error );
+    }
+};
+
+function deleteEditProduct ( e )
+{
+    if ( e.target.classList.contains( 'delete-button' ) )
+    {
+        deleteProduct( {
+            productId: e.target.attributes['data-product-id'].value,
+            restaurantId: e.target.attributes['data-restaurant-id'].value
+        } );
+    } else
+    {
+        editProduct( {
+            productId: e.target.attributes['data-product-id'].value,
+            restaurantId: e.target.attributes['data-restaurant-id'].value
+        } );
+    }
+};
+
+async function deleteProduct ( { productId, restaurantId } )
+{
+    let restaurantSelected = user?.restaurants?.find( restaurant => restaurant.id === restaurantId );
+    user?.restaurants?.forEach( ( restaurant ) =>
+    {
+        if ( restaurant.id === restaurantSelected.id )
+        {
+            const updatedProducts = restaurantSelected?.products?.filter( product => product.id !== productId );
+            console.log( updatedProducts );
+            restaurant.products = [...updatedProducts];
+        }
+    } );
+
+    try
+    {
+        await fetch( `${ "https://db-coderhouse-project.onrender.com" }/users/${ user.id }`, {
+            method: 'PUT',
+            body: JSON.stringify( user ), // data can be `string` or {object}!
+            headers: {
+                "Content-Type": "application/json",
+            },
+            redirect: 'manual'
+        } ).then( ( res ) => res.json() )
+            .catch( ( error ) => console.error( "Error:", error ) )
+            .then( ( response ) => console.log( "Success:", response ) );
+        generateTableContent( true );
     } catch ( error )
     {
         console.log( error );
     }
 
-};
+
+}
+function editProduct ( { productId, restaurantId } )
+{
+
+    const fullNameSignUpInput = document.querySelector( '#name' );
+    const phoneNumberSignUpInput = document.querySelector( '#phone' );
+    const rolSignUpInput = document.querySelector( '#customer-rol' );
+    const emailSignUpInput = document.querySelector( '#email' );
+    const passwordSignUpInput = document.querySelector( '#password' );
+
+    let restaurantSelected = user?.restaurants?.find( restaurant => restaurant.id === restaurantId );
+    console.log( restaurantSelected );
+    user?.restaurants?.forEach( ( restaurant ) =>
+    {
+        if ( restaurant.id === restaurantSelected.id )
+        {
+            const updatedProducts = restaurantSelected?.products?.find( product => product.id !== productId );
+            console.log( updatedProducts );
+        }
+    } );
+}

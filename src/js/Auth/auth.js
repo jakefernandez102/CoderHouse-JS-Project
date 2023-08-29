@@ -19,7 +19,6 @@ export function validateUser ( user, requestedForm )
         default:
             break;
     }
-
 }
 
 export async function getUsersList ()
@@ -105,8 +104,15 @@ const createUser = async ( user, requestedForm ) =>
         } ).then( ( res ) => res.json() )
             .catch( ( error ) => console.error( "Error:", error ) )
             .then( ( response ) => console.log( "Success:", response ) );
+
         printAlert( formUsed, 'User added successfully!!', false );
+
         localStorage.setItem( 'userToken', JSON.stringify( token ) );
+
+        setTimeout( () =>
+        {
+            window.location.href = '/';
+        }, 3000 );
     } catch ( error )
     {
         console.log( error );

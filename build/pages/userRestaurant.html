@@ -4,59 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>userRestaurant</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        header {
-            background-color: #333;
-            color: #fff;
-            padding: 10px 0;
-            text-align: center;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .restaurant-form,
-        .product-form {
-            background-color: #fff;
-            border: 1px solid #ddd;
-            padding: 20px;
-            margin-bottom: 20px;
-            color: #333;
-        }
-        .form-group {
-            margin-bottom: 10px;
-        }
-        label {
-            display: block;
-            font-weight: bold;
-        }
-        input[type="text"],
-        input[type="number"] {
-            width: 100%;
-            padding: 5px;
-        }
-        button {
-            background-color: #333;
-            color: #fff;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-        }
-        .toggle-buttons{
-            display: flex;
-            flex-direction: column;
-            gap: 5rem;
-        }
-    </style>
+
 </head>
 <body>
-    <header>
+    <header class="user-restaurant-header">
         <h1>Manage Restaurants and Products</h1>
         <p>Add new restaurants and products to sell</p>
     </header>
@@ -104,6 +55,10 @@
                                     <div class="form-group">
                                         <label for="product-name">Product Name:</label>
                                         <input type="text" id="product-name" name="product-name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="product-detail">Product Details:</label>
+                                        <textarea maxlength="20" name="product-detail" id="product-detail" class="form-control"></textarea>
                                     </div>
                                     <div class="form-group">
                                         <label for="product-price">Product Price:</label>

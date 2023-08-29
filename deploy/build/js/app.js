@@ -1,6 +1,7 @@
 
 
 import { validateUser, getUsersList } from "./Auth/auth.js";
+import { fillCart } from "./functions/food-store.js";
 import { validateRestaurant } from "./functions/restaurant-products.js";
 import { printAlert } from "./helpers/alert.js";
 import { formatMoney } from "./helpers/formater.js";
@@ -107,6 +108,7 @@ async function getActualUser ( userToken )
     {
         const response = await fetch( `${ "https://db-coderhouse-project.onrender.com" }/users/?token=${ userToken }` );
         actualUser = await response.json();
+
         return actualUser;
     } catch ( error )
     {
@@ -124,10 +126,16 @@ function createMainPageToDisplayUserSections ()
 
 function addScriptingForSignInSignUPSignOutButtons ()
 {
+    console.log( actualUser );
+    if ( actualUser[0].rol === 2 )
+    {
+        fillCart( actualUser[0] );
+    }
     const ulNavElement = document.querySelector( '.nav' );
-    const liSignOutElement = document.createElement( 'LI' );
-    const aSignOutElement = document.createElement( 'A' );
 
+    const liSignOutElement = document.createElement( 'LI' );
+
+    const aSignOutElement = document.createElement( 'A' );
     liSignOutElement.classList.add( 'nav__item' );
 
     aSignOutElement.classList.add( 'nav__link' );
@@ -197,10 +205,38 @@ function createNewUserSectionsButtons ()
     liElement.appendChild( aElement );
     ulElement.appendChild( liElement );
 
+    if ( actualUser[0].rol === 2 )
+    {
+        const liCartElement = document.createElement( 'LI' );
+        liCartElement.classList.add( 'nav__item', 'li-Cart' );
+
+        const aCartElement = document.createElement( 'A' );
+        aCartElement.classList.add( 'a-Cart' );
+        aCartElement.setAttribute( "data-bs-toggle", "modal" );
+        aCartElement.setAttribute( "href", "#exampleModalToggle" );
+        aCartElement.setAttribute( 'role', "button" );
+
+        const divCart = document.createElement( 'DIV' );
+        divCart.classList.add( 'cart-number' );
+        divCart.textContent = '0';
+
+        const imgCartElement = document.createElement( 'IMG' );
+        imgCartElement.src = 'build/img/cart.svg';
+        imgCartElement.classList.add( 'cart' );
+
+        aCartElement.appendChild( imgCartElement );
+        liCartElement.appendChild( aCartElement );
+        liCartElement.appendChild( divCart );
+        ulElement.appendChild( liCartElement );
+    }
+
     headerNavElement.appendChild( ulElement );
     headerBarraElement.insertBefore( headerNavElement, headerBarraElement.firstChild.nextSibling.nextSibling );
 
     ulNavElement.removeChild( liSignInNavElement );
     ulNavElement.removeChild( liSignUpNavElement );
+
+    const cart = document.querySelector( '.cart-number' );
+    cart.textContent = actualUser[0]?.orders?.length;
 };
 

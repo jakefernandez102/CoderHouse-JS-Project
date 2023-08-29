@@ -6,49 +6,46 @@
     <title>User Home</title>
     <style>
 
-        header {
-            background-color: #333;
-            color: #fff;
-            padding: 10px 0;
-            text-align: center;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .order-list {
-            list-style: none;
-            padding: 0;
-            color: #333;
-        }
-        .order-item {
-            background-color: #fff;
-            border: 1px solid #ddd;
-            margin-bottom: 10px;
-            padding: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+
     </style>
 </head>
 <body>
-    <header>
+    <header class="user-home-header">
         <h1>Food Store</h1>
         <p>Delicious food at your fingertips!</p>
     </header>
     <div class="container">
         <h2>Recent Orders</h2>
-        <ul class="order-list">
-            <li class="order-item">
+        <ul class="order-list ul-buyer">
+            <!-- <li class="order-item">
                 <span>Pedido #12345</span>
                 <span>Fecha: 2023-08-25</span>
                 <span>Total: $30.00</span>
                 <span>Client: Jake Fernandez</span>
-            </li>
+            </li> -->
         </ul>
     </div>
+
+    <section class="container d-flex flex-column gap-3 shadow">
+        <div class="bg-white p-3 text-black">
+            <h2 >Total to pay</h2>
+            <div class="container d-flex gap-3">
+                <h3>Subtotal:</h3>
+                <h2 class="last-subtotal-pay"></h2>
+            </div>
+            <div class="container d-flex gap-3">
+                <h3>Taxes:
+                    <small>(10%)</small>
+                </h3>
+                <h2 class="last-taxes-pay"></h2>
+            </div>
+            <div class="container d-flex gap-3">
+                <h3>Total:</h3>
+                <h2 class="last-total-pay"></h2>
+            </div>
+        </div>
+    </section>
+
 </body>
 
 </html>

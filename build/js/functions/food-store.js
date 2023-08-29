@@ -1,5 +1,7 @@
+import { printAlert } from "../helpers/alert.js";
 import { formatMoney } from "../helpers/formater.js";
 import { generateNewId } from "../helpers/idGenerator.js";
+import { showContentToBuyer } from "./home-user.js";
 
 let user = {};
 let users = [];
@@ -39,7 +41,7 @@ function printProductsToDOM ()
 
                 const h2RestaurantName = document.createElement( 'H2' );
                 const h2Underline = document.createElement( 'U' );
-                h2RestaurantName.classList.add( 'underline', 'fw-bold', 'text-center', 'fs-2' );
+                h2RestaurantName.classList.add( 'restaurant-name', 'text-center' );
                 h2Underline.textContent = restaurant.name;
                 h2RestaurantName.appendChild( h2Underline );
 
@@ -52,15 +54,19 @@ function printProductsToDOM ()
                 restaurant?.products?.forEach( ( product ) =>
                 {
                     divProductItem = document.createElement( 'DIV' );
-                    divProductItem.classList.add( 'product-item' );
+                    divProductItem.classList.add( 'product-item', 'shadow' );
                     divProductItem.setAttribute( 'data-product-id', product.id );
 
                     divProductItem.innerHTML = `
                     <img src="https://c8.alamy.com/compes/2f4nkpn/fotografia-profesional-de-la-comida-diseno-de-la-vista-de-la-mesa-perfecto-para-su-sitio-web-revista-blog-de-la-comida-o-cualquier-cosa-que-usted-pueda-pensar-en-necesitarlo-para-2f4nkpn.jpg" alt="Producto 1">
                     <h3 class="product-title">${ product.name }</h3>
-                    <p>Descripción del producto 1.</p>
+                    <p class="fs-6 fw-light d-block">${ product.detail }</p>
                     <p>Price: ${ formatMoney( parseInt( product.price ) ) }</p>
-                    <button class="order-btn" data-product-id="${ product.id }" data-restaurant-id="${ restaurant.id }">Add Product</button>
+                    <div class="d-flex gap-3 align-items-center">
+                        <p>Quantity:</p>
+                        <input class="product-quantity-order form-control text-center text-4" type="number" value="1" min="1" max="${ product.quantity }"/>
+                    </div>
+                    <button class="order-btn d-block mx-auto mt-3" data-product-id="${ product.id }" data-restaurant-id="${ restaurant.id }">Add Product</button>
                 `;
                     divProductGrid.appendChild( divProductItem );
                     divProductItem.addEventListener( 'click', addProductToOrder, false );
@@ -86,7 +92,7 @@ async function addProductToOrder ( e )
         {
             const response = await fetch( `${ "https://db-coderhouse-project.onrender.com" }/users/?token=${ token }` );
             const actualUser = await response.json();
-            ;
+
             addOrderToUser(
                 {
                     actualUser: actualUser[0],
@@ -106,21 +112,30 @@ async function addProductToOrder ( e )
 
 function addOrderToUser ( { actualUser, productId, restaurantId } )
 {
+    const quantityInput = document.querySelector( '.product-quantity-order' );
+
     users.forEach( async ( user ) =>
     {
+        if ( user.rol == 2 )
+        {
+            console.log( user.orders.some( product => { console.log( product.id, productId ); } ) );
+            if ( user.orders.some( product => product.id === productId ) )
+            {
+                const productToUpdate = user.orders.find( product => product.id === productId );
+                productToUpdate.quantity = productToUpdate.quantity + 1;
+                console.log( productToUpdate );
+            }
+        }
         if ( user.rol == 1 )
         {
             const restaurantSelected = user?.restaurants?.filter( restaurant => restaurant.id === restaurantId );
             if ( restaurantSelected !== undefined )
             {
-                console.log( user.restaurants.find( res => res.name === restaurantSelected[0].name ) );
 
-                const productToAdd = user.restaurants.find( res => res.name === restaurantSelected[0].name ).products.find( product => product.id === productId );
-                console.log( productToAdd );
+                const productToAdd = user?.restaurants?.find( res => res?.name === restaurantSelected[0]?.name ).products?.find( product => product?.id === productId );
 
-                const order = { ...productToAdd, id: generateNewId() };
+                const order = { ...productToAdd, id: generateNewId(), restaurantId, quantityOrder: quantityInput.value };
                 actualUser.orders.push( order );
-                console.log( actualUser );
                 try
                 {
                     await fetch( `${ "https://db-coderhouse-project.onrender.com" }/users/${ actualUser.id }`, {
@@ -133,13 +148,95 @@ function addOrderToUser ( { actualUser, productId, restaurantId } )
                     } ).then( ( res ) => res.json() )
                         .catch( ( error ) => console.error( "Error:", error ) )
                         .then( ( response ) => console.log( "Success:", response ) );
-                    printAlert( 'restaurantForm', 'Restaurant added successfully!!', false );
+
+                    const cart = document.querySelector( '.cart-number' );
+                    cart.textContent = actualUser?.orders?.length;
+                    fillCart( actualUser, true );
+                    printAlert( 'product-item', 'Product added successfully', false );
                 } catch ( error )
                 {
                     console.log( error );
                 }
             }
-
         }
     } );
+};
+
+export function fillCart ( actualUser, ulExists = false )
+{
+    const cartBody = document.querySelector( '.cart-products' );
+    const cartList = document.querySelector( '.cart-ul' );
+    if ( cartBody && ulExists )
+    {
+        let elementToDelete = cartList.lastChild;
+        while ( elementToDelete )
+        {
+            cartList.removeChild( elementToDelete );
+            elementToDelete = cartList.lastChild;
+        }
+    }
+
+    actualUser.orders.forEach( ( product ) =>
+    {
+        const liCart = document.createElement( 'LI' );
+        liCart.classList.add( 'cart-li' );
+
+        liCart.innerHTML = `
+                <div class="cart-img">
+                    <img src="https://c8.alamy.com/compes/2f4nkpn/fotografia-profesional-de-la-comida-diseno-de-la-vista-de-la-mesa-perfecto-para-su-sitio-web-revista-blog-de-la-comida-o-cualquier-cosa-que-usted-pueda-pensar-en-necesitarlo-para-2f4nkpn.jpg" alt="">
+                </div>
+                <div>
+                    <p>${ product.name }</p>
+                    <span class="fs-6 ">${ product.detail }</span>
+                </div>
+                <div>
+                    <p>${ formatMoney( parseInt( product.price ) ) }</p>
+                </div>
+                <div>
+                    <p>${ product.quantityOrder }</p>
+                </div>
+                <div>
+                    <button class="bg-transparent border-0 text-danger text-3 delete-product-cart" data-productId="${ product.id }">Delete</button>
+                </div>
+        `;
+        cartList.appendChild( liCart );
+        liCart.addEventListener( 'click', ( e ) => deleteProductCart( e, actualUser ), false );
+    } );
+    cartBody.appendChild( cartList );
+};
+
+async function deleteProductCart ( e, actualUser )
+{
+    if ( e.target.classList.contains( 'delete-product-cart' ) )
+    {
+        const productSelected = e.target.attributes['data-productId'].value;
+        const updatedOrders = actualUser?.orders?.filter( product => product?.id !== productSelected );
+        actualUser.orders = [...updatedOrders];
+        console.log( actualUser );
+
+        try
+        {
+            await fetch( `${ "https://db-coderhouse-project.onrender.com" }/users/${ actualUser.id }`, {
+                method: 'PUT',
+                body: JSON.stringify( actualUser ), // data can be `string` or {object}!
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                redirect: "manual"
+            } ).then( ( res ) => res.json() )
+                .catch( ( error ) => console.error( "Error:", error ) )
+                .then( ( response ) => console.log( "Success:", response ) );
+
+            const cart = document.querySelector( '.cart-number' );
+            cart.textContent = actualUser?.orders?.length;
+
+
+            fillCart( actualUser, true );
+            showContentToBuyer( actualUser );
+
+        } catch ( error )
+        {
+            console.log( error );
+        }
+    }
 };
