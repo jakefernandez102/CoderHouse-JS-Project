@@ -6,6 +6,7 @@ let user = {};
 let users = [];
 let customers = [];
 let token = '';
+let sellerSignInCounter = 1;
 
 export async function validateWichContentToDisplay ()
 {
@@ -40,18 +41,10 @@ function showUserRolContent ( user, users )
     }
 };
 
+
 export function showContentToSeller ( users )
 {
 
-
-    users.forEach( _user =>
-    {
-        if ( _user.rol === 2 )
-        {
-            customers.push( _user );
-            console.log( customers );
-        }
-    } );
     const ulBuyer = document.querySelector( '.ul-buyer' );
 
     let elementToDelete = ulBuyer.lastChild;
@@ -60,25 +53,52 @@ export function showContentToSeller ( users )
         ulBuyer.removeChild( elementToDelete );
         elementToDelete = ulBuyer.lastChild;
     }
-    customers.forEach( customer =>
+
+    users.forEach( ( _user, idx ) =>
     {
-        customer?.orders?.forEach( async ( product, idx ) =>
+
+        if ( sellerSignInCounter === 1 && _user.rol === 2 )
         {
-            const liBuyer = document.createElement( 'LI' );
-            liBuyer.innerHTML = `
+            _user.orders.forEach( ( product ) =>
+            {
+                fillCustomersPerRestaurant( _user, product );
+            } );
+        }
+    } );
+    ++sellerSignInCounter;
+    buyInRestaurant.forEach( async ( product, idx ) =>
+    {
+        const liBuyer = document.createElement( 'LI' );
+        liBuyer.innerHTML = `
                 <li class="order-item">
                     <span>OrderItem #${ idx + 1 }</span>
                     <span>Date: ${ formatDate( new Date() ) }</span>
+                    <span>Unit Name: ${ product.name }</span>
                     <span>Unit Price: ${ formatMoney( product.price ) }</span>
                     <span>Quantity Ordered: ${ product.quantityOrder }</span>
                     <span>Total of this product: ${ formatMoney( calculateSubTotal( product.price, product.quantityOrder ) ) }</span>
-                    <span>Customer: ${ customer.fullName }</span>
+                    <span>Customer: ${ product.fullName }</span>
                 </li>
             `;
-            ulBuyer.appendChild( liBuyer );
-        } );
-        submitBill( customer );
+        ulBuyer.appendChild( liBuyer );
+        submitBill( product );
     } );
+
+}
+
+let updatedOrders = [];
+let buyInRestaurant = [];
+function fillCustomersPerRestaurant ( _user, product )
+{
+    user[0].restaurants.forEach( ( restaurant ) =>
+    {
+        if ( restaurant.id === product.restaurantId )
+        {
+            buyInRestaurant = [...buyInRestaurant, { ...product, fullName: _user.fullName }];
+            console.log( buyInRestaurant );
+        }
+    } );
+
 }
 
 export function showContentToBuyer ( user )
@@ -101,6 +121,7 @@ export function showContentToBuyer ( user )
             <li class="order-item">
                 <span>OrderItem #${ idx + 1 }</span>
                 <span>Date: ${ formatDate( new Date() ) }</span>
+                <span>Unit Name: ${ product.name }</span>
                 <span>Unit Price: ${ formatMoney( product.price ) }</span>
                 <span>Quantity Ordered: ${ product.quantityOrder }</span>
                 <span>Total of this product: ${ formatMoney( calculateSubTotal( product.price, product.quantityOrder ) ) }</span>
@@ -142,7 +163,7 @@ async function getRestaurantName ( restaurantId )
 
 };
 
-function submitBill ( user )
+function submitBill ( _user )
 {
     const h2SubTotal = document.querySelector( '.last-subtotal-pay' );
     const h2Taxes = document.querySelector( '.last-taxes-pay' );
@@ -152,29 +173,33 @@ function submitBill ( user )
     let taxes = 0;
     let total = 0;
 
-    if ( customers.length !== 0 )
+    if ( buyInRestaurant.length !== 0 && user[0].rol === 1 )
     {
-        customers.forEach( customer =>
+        console.log( _user );
+        buyInRestaurant.forEach( product =>
         {
-            customer?.orders?.forEach( product =>
-            {
-                console.log( product );
-                subtotal += calculateSubTotal( product?.price, product?.quantityOrder );
-            } );
+            subtotal += calculateSubTotal( product?.price, product?.quantityOrder );
+            taxes = calculateTaxes( subtotal );
+            total = subtotal + taxes;
         } );
+
+
+        h2SubTotal.textContent = subtotal;
+        h2Taxes.textContent = taxes;
+        h2Total.textContent = total;
     } else
     {
-        user?.orders?.forEach( product =>
+        _user?.orders?.forEach( product =>
         {
             console.log( product );
             subtotal += calculateSubTotal( product?.price, product?.quantityOrder );
         } );
-    }
-    taxes = calculateTaxes( subtotal );
-    total = subtotal + taxes;
+        taxes = calculateTaxes( subtotal );
+        total = subtotal + taxes;
 
-    h2SubTotal.textContent = subtotal;
-    h2Taxes.textContent = taxes;
-    h2Total.textContent = total;
+        h2SubTotal.textContent = subtotal;
+        h2Taxes.textContent = taxes;
+        h2Total.textContent = total;
+    }
 
 };

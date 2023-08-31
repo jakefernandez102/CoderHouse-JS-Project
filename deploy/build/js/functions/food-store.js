@@ -1,3 +1,4 @@
+import { printAlert } from "../helpers/alert.js";
 import { formatMoney } from "../helpers/formater.js";
 import { generateNewId } from "../helpers/idGenerator.js";
 import { showContentToBuyer } from "./home-user.js";
@@ -63,7 +64,7 @@ function printProductsToDOM ()
                     <p>Price: ${ formatMoney( parseInt( product.price ) ) }</p>
                     <div class="d-flex gap-3 align-items-center">
                         <p>Quantity:</p>
-                        <input class="product-quantity-order form-control text-center text-4" type="number" min="1" max="${ product.quantity }" value="1" />
+                        <input class="product-quantity-order form-control text-center text-4" type="number" value="1" min="1" max="${ product.quantity }"/>
                     </div>
                     <button class="order-btn d-block mx-auto mt-3" data-product-id="${ product.id }" data-restaurant-id="${ restaurant.id }">Add Product</button>
                 `;
@@ -111,18 +112,29 @@ async function addProductToOrder ( e )
 
 function addOrderToUser ( { actualUser, productId, restaurantId } )
 {
-    const quantityInput = document.querySelector( '.product-quantity-order' ).value;
+    const quantityInput = document.querySelector( '.product-quantity-order' );
 
     users.forEach( async ( user ) =>
     {
+        if ( user.rol == 2 )
+        {
+            console.log( user.orders.some( product => { console.log( product.id, productId ); } ) );
+            if ( user.orders.some( product => product.id === productId ) )
+            {
+                const productToUpdate = user.orders.find( product => product.id === productId );
+                productToUpdate.quantity = productToUpdate.quantity + 1;
+                console.log( productToUpdate );
+            }
+        }
         if ( user.rol == 1 )
         {
             const restaurantSelected = user?.restaurants?.filter( restaurant => restaurant.id === restaurantId );
             if ( restaurantSelected !== undefined )
             {
+
                 const productToAdd = user?.restaurants?.find( res => res?.name === restaurantSelected[0]?.name ).products?.find( product => product?.id === productId );
 
-                const order = { ...productToAdd, id: generateNewId(), restaurantId, quantityOrder: quantityInput };
+                const order = { ...productToAdd, id: generateNewId(), restaurantId, quantityOrder: quantityInput.value };
                 actualUser.orders.push( order );
                 try
                 {
@@ -140,7 +152,7 @@ function addOrderToUser ( { actualUser, productId, restaurantId } )
                     const cart = document.querySelector( '.cart-number' );
                     cart.textContent = actualUser?.orders?.length;
                     fillCart( actualUser, true );
-
+                    printAlert( 'product-item', 'Product added successfully', false );
                 } catch ( error )
                 {
                     console.log( error );
@@ -198,7 +210,7 @@ async function deleteProductCart ( e, actualUser )
     if ( e.target.classList.contains( 'delete-product-cart' ) )
     {
         const productSelected = e.target.attributes['data-productId'].value;
-        const updatedOrders = actualUser?.orders?.filter( product => product.id !== productSelected );
+        const updatedOrders = actualUser?.orders?.filter( product => product?.id !== productSelected );
         actualUser.orders = [...updatedOrders];
         console.log( actualUser );
 

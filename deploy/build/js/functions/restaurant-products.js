@@ -39,8 +39,8 @@ export async function generateScript ()
     productForm.addEventListener( 'submit', ( e ) =>
     {
         e.preventDefault();
-        addProductToRestaurant();
-        e.target.reset();
+        addProductToRestaurant( e );
+
     }, false );
 }
 
@@ -166,32 +166,30 @@ async function fillSelectRestaurant ()
         selectRestaurantInput.appendChild( option );
     } );
 
-    console.log( selectRestaurantInput );
 
 };
 
 
-async function addProductToRestaurant ()
+async function addProductToRestaurant ( e )
 {
 
     let productNameInput = document.querySelector( '#product-name' );
     let productDetailInput = document.querySelector( '#product-detail' );
     let productPriceInput = document.querySelector( '#product-price' );
     let productQuantityInput = document.querySelector( '#product-quantity' );
+
     if ( [productNameInput.value, productDetailInput.value, productPriceInput.value, productQuantityInput.value].includes( '' ) || selectRestaurantInput.value === '0' )
     {
         printAlert( 'product-form', 'All fields are required' );
         return;
     }
-    if ( user?.restaurants?.products?.some( product => product?.name === productNameInput ) )
+    if ( user.restaurants.some( restaurant => restaurant.products.some( product => product.name === productNameInput.value ) ) )
     {
         printAlert( 'product-form', 'Product already exists in the restaurant' );
         return;
-    }
-
+    };
     const restaurantToAddProduct = user?.restaurants?.filter( restaurant => restaurant.id === selectRestaurantInput.value )[0];
     restaurantToAddProduct.products.push( { id: generateNewId(), name: productNameInput.value, detail: productDetailInput.value, price: productPriceInput.value, quantity: productQuantityInput.value } );
-
     try
     {
         await fetch( `${ "https://db-coderhouse-project.onrender.com" }/users/${ user.id }`, {
@@ -206,6 +204,7 @@ async function addProductToRestaurant ()
         printAlert( 'product-form', 'Product added successfully!!', false );
 
         generateTableContent( true );
+        e.target.reset();
     } catch ( error )
     {
         console.log( error );

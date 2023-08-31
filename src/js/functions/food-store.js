@@ -110,32 +110,39 @@ async function addProductToOrder ( e )
 
 };
 
+let productToUpdate;
 function addOrderToUser ( { actualUser, productId, restaurantId } )
 {
     const quantityInput = document.querySelector( '.product-quantity-order' );
 
     users.forEach( async ( user ) =>
     {
-        if ( user.rol == 2 )
-        {
-            console.log( user.orders.some( product => { console.log( product.id, productId ); } ) );
-            if ( user.orders.some( product => product.id === productId ) )
-            {
-                const productToUpdate = user.orders.find( product => product.id === productId );
-                productToUpdate.quantity = productToUpdate.quantity + 1;
-                console.log( productToUpdate );
-            }
-        }
-        if ( user.rol == 1 )
+        if ( user.rol === 1 )
         {
             const restaurantSelected = user?.restaurants?.filter( restaurant => restaurant.id === restaurantId );
             if ( restaurantSelected !== undefined )
             {
 
-                const productToAdd = user?.restaurants?.find( res => res?.name === restaurantSelected[0]?.name ).products?.find( product => product?.id === productId );
+                let productToAdd = user?.restaurants?.find( res => res?.name === restaurantSelected[0]?.name ).products?.find( product => product?.id === productId );
+                console.log( productToAdd );
+                let order = { ...productToAdd, id: generateNewId(), productId: productId, restaurantId, quantityOrder: parseInt( quantityInput.value ) };
+                console.log( order );
 
-                const order = { ...productToAdd, id: generateNewId(), restaurantId, quantityOrder: quantityInput.value };
-                actualUser.orders.push( order );
+                if ( actualUser.orders.some( product => product.productId === productToAdd.id ) )
+                {
+                    let updatedOrders = actualUser.orders.map( ( product ) =>
+                    {
+                        if ( product.productId === productToAdd.id )
+                        {
+                            product.quantityOrder = product.quantityOrder + 1;
+                        }
+                        return product;
+                    } );
+                    actualUser.orders = [...updatedOrders];
+                } else
+                {
+                    actualUser.orders.push( order );
+                }
                 try
                 {
                     await fetch( `${ process.env.DB_USERS_URL }/users/${ actualUser.id }`, {
@@ -152,7 +159,14 @@ function addOrderToUser ( { actualUser, productId, restaurantId } )
                     const cart = document.querySelector( '.cart-number' );
                     cart.textContent = actualUser?.orders?.length;
                     fillCart( actualUser, true );
-                    printAlert( 'product-item', 'Product added successfully', false );
+
+                    Toastify( {
+                        text: "Product added to cart!!!",
+                        className: "info",
+                        style: {
+                            background: "linear-gradient(to right, #96c93d, #96c93d)",
+                        }
+                    } ).showToast();
                 } catch ( error )
                 {
                     console.log( error );
@@ -207,36 +221,50 @@ export function fillCart ( actualUser, ulExists = false )
 
 async function deleteProductCart ( e, actualUser )
 {
-    if ( e.target.classList.contains( 'delete-product-cart' ) )
+    const confirmDelete = confirm( 'You are about delete a product from cart. \n\n Do you want to continue?' );
+    if ( confirmDelete )
     {
-        const productSelected = e.target.attributes['data-productId'].value;
-        const updatedOrders = actualUser?.orders?.filter( product => product?.id !== productSelected );
-        actualUser.orders = [...updatedOrders];
-        console.log( actualUser );
-
-        try
+        if ( e.target.classList.contains( 'delete-product-cart' ) )
         {
-            await fetch( `${ process.env.DB_USERS_URL }/users/${ actualUser.id }`, {
-                method: 'PUT',
-                body: JSON.stringify( actualUser ), // data can be `string` or {object}!
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                redirect: "manual"
-            } ).then( ( res ) => res.json() )
-                .catch( ( error ) => console.error( "Error:", error ) )
-                .then( ( response ) => console.log( "Success:", response ) );
+            const productSelected = e.target.attributes['data-productId'].value;
+            const updatedOrders = actualUser?.orders?.filter( product => product?.id !== productSelected );
+            actualUser.orders = [...updatedOrders];
+            console.log( actualUser );
 
-            const cart = document.querySelector( '.cart-number' );
-            cart.textContent = actualUser?.orders?.length;
+            try
+            {
+                await fetch( `${ process.env.DB_USERS_URL }/users/${ actualUser.id }`, {
+                    method: 'PUT',
+                    body: JSON.stringify( actualUser ), // data can be `string` or {object}!
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    redirect: "manual"
+                } ).then( ( res ) => res.json() )
+                    .catch( ( error ) => console.error( "Error:", error ) )
+                    .then( ( response ) => console.log( "Success:", response ) );
+                Toastify( {
+                    text: "Product deleted from cart!!!",
+                    offset: {
+                        x: 50, // horizontal axis - can be a number or a string indicating unity. eg: '2em'
+                        y: 10 // vertical axis - can be a number or a string indicating unity. eg: '2em'
+                    },
+                    style: {
+                        background: "red",
+                    }
+                } ).showToast();
+
+                const cart = document.querySelector( '.cart-number' );
+                cart.textContent = actualUser?.orders?.length;
 
 
-            fillCart( actualUser, true );
-            showContentToBuyer( actualUser );
-
-        } catch ( error )
-        {
-            console.log( error );
+                fillCart( actualUser, true );
+                showContentToBuyer( actualUser );
+            } catch ( error )
+            {
+                console.log( error );
+            }
         }
     }
+
 };
