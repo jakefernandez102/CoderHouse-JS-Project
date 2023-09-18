@@ -38,6 +38,15 @@ img {
   width: 100%;
 }
 
+#td-image {
+  width: 10%;
+}
+
+#table-product-img {
+  display: inline-block;
+  width: 70%;
+}
+
 /*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
 /* Document
    ========================================================================== */

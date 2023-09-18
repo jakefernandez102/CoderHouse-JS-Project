@@ -74,7 +74,7 @@ export function showContentToSeller ( users )
                     <span>OrderItem #${ idx + 1 }</span>
                     <span>Date: ${ formatDate( new Date() ) }</span>
                     <span>Unit Name: ${ product.name }</span>
-                    <span>Unit Price: ${ formatMoney( product.price ) }</span>
+                    <span>Unit Price: ${ formatMoney( parseInt( product.price ) ) }</span>
                     <span>Quantity Ordered: ${ product.quantityOrder }</span>
                     <span>Total of this product: ${ formatMoney( calculateSubTotal( product.price, product.quantityOrder ) ) }</span>
                     <span>Customer: ${ product.fullName }</span>
@@ -122,7 +122,7 @@ export function showContentToBuyer ( user )
                 <span>OrderItem #${ idx + 1 }</span>
                 <span>Date: ${ formatDate( new Date() ) }</span>
                 <span>Unit Name: ${ product.name }</span>
-                <span>Unit Price: ${ formatMoney( product.price ) }</span>
+                <span>Unit Price: ${ formatMoney( parseInt( product.price ) ) }</span>
                 <span>Quantity Ordered: ${ product.quantityOrder }</span>
                 <span>Total of this product: ${ formatMoney( calculateSubTotal( product.price, product.quantityOrder ) ) }</span>
                 <span>Restaurant: ${ restaurantName }</span>
@@ -184,9 +184,9 @@ function submitBill ( _user )
         } );
 
 
-        h2SubTotal.textContent = subtotal;
-        h2Taxes.textContent = taxes;
-        h2Total.textContent = total;
+        h2SubTotal.textContent = formatMoney( subtotal );
+        h2Taxes.textContent = formatMoney( taxes );
+        h2Total.textContent = formatMoney( total );
     } else
     {
         _user?.orders?.forEach( product =>
@@ -197,9 +197,9 @@ function submitBill ( _user )
         taxes = calculateTaxes( subtotal );
         total = subtotal + taxes;
 
-        h2SubTotal.textContent = subtotal;
-        h2Taxes.textContent = taxes;
-        h2Total.textContent = total;
+        h2SubTotal.textContent = formatMoney( subtotal );
+        h2Taxes.textContent = formatMoney( taxes );
+        h2Total.textContent = formatMoney( total );
     }
 
 };

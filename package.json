@@ -33,6 +33,7 @@
     ">1%"
   ],
   "dependencies": {
+    "cloudinary": "^1.40.0",
     "dotenv": "^16.3.1",
     "json-server": "^0.17.3"
   }

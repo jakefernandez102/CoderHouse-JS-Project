@@ -1,6 +1,8 @@
 import { printAlert } from "../helpers/alert.js";
 import { formatMoney } from "../helpers/formater.js";
 import { generateNewId } from "../helpers/idGenerator.js";
+import { widget_cloudinary } from "../app.js";
+
 
 let restaurantForm = null;
 let productForm = null;
@@ -12,6 +14,9 @@ let editButton = '';
 let user = {};
 let users = [];
 let token = '';
+
+
+
 export async function generateScript ()
 {
     token = localStorage.getItem( 'userToken' ).split( '"' )[1];
@@ -39,8 +44,8 @@ export async function generateScript ()
     productForm.addEventListener( 'submit', ( e ) =>
     {
         e.preventDefault();
-        addProductToRestaurant( e );
-
+        addProductToRestaurant( true );
+        e.target.reset();
     }, false );
 }
 
@@ -67,6 +72,7 @@ function generateTableContent ( deleteProduct = false )
     tableHead.innerHTML = `
         <tr>
 
+            <th scope="col">Product Image</th>
             <th scope="col">Product Name</th>
             <th scope="col">Product Price</th>
             <th scope="col">Product Quantity</th>
@@ -82,6 +88,9 @@ function generateTableContent ( deleteProduct = false )
             tr = document.createElement( 'TR' );
             tr.innerHTML = `
 
+                <td id='td-image'>
+                    <img id="table-product-img" src="${ product?.image }" alt="${ product.name } image"/>
+                </td>
                 <td>
                     ${ product.name }
                     <span class="fs-6 fw-lighter d-block">${ product.detail }</span>
@@ -145,7 +154,7 @@ export async function addRestaurant ( user, restaurantInput )
         setTimeout( () =>
         {
             window.location.href = '/user-restaurant';
-        }, 3000 );
+        }, 600 );
 
     } catch ( error )
     {
@@ -170,45 +179,57 @@ async function fillSelectRestaurant ()
 };
 
 
-async function addProductToRestaurant ( e )
+export async function addProductToRestaurant ( send, src = '' )
 {
 
     let productNameInput = document.querySelector( '#product-name' );
     let productDetailInput = document.querySelector( '#product-detail' );
     let productPriceInput = document.querySelector( '#product-price' );
     let productQuantityInput = document.querySelector( '#product-quantity' );
+    let productimage = document.querySelector( '#product-image-img' );
 
     if ( [productNameInput.value, productDetailInput.value, productPriceInput.value, productQuantityInput.value].includes( '' ) || selectRestaurantInput.value === '0' )
     {
         printAlert( 'product-form', 'All fields are required' );
         return;
     }
-    if ( user.restaurants.some( restaurant => restaurant.products.some( product => product.name === productNameInput.value ) ) )
-    {
-        printAlert( 'product-form', 'Product already exists in the restaurant' );
-        return;
-    };
-    const restaurantToAddProduct = user?.restaurants?.filter( restaurant => restaurant.id === selectRestaurantInput.value )[0];
-    restaurantToAddProduct.products.push( { id: generateNewId(), name: productNameInput.value, detail: productDetailInput.value, price: productPriceInput.value, quantity: productQuantityInput.value } );
-    try
-    {
-        await fetch( `${ "https://db-coderhouse-project.onrender.com" }/users/${ user.id }`, {
-            method: 'PUT',
-            body: JSON.stringify( user ), // data can be `string` or {object}!
-            headers: {
-                "Content-Type": "application/json",
-            }
-        } ).then( ( res ) => res.json() )
-            .catch( ( error ) => console.error( "Error:", error ) )
-            .then( ( response ) => console.log( "Success:", response ) );
-        printAlert( 'product-form', 'Product added successfully!!', false );
 
-        generateTableContent( true );
-        e.target.reset();
-    } catch ( error )
+    if ( src !== '' )
     {
-        console.log( error );
+        if ( user.restaurants.some( restaurant => restaurant.products.some( product => product.name === productNameInput.value ) ) )
+        {
+            printAlert( 'product-form', 'Product already exists in the restaurant' );
+            return;
+        };
+        const restaurantToAddProduct = user?.restaurants?.filter( restaurant => restaurant.id === selectRestaurantInput.value )[0];
+        restaurantToAddProduct.products.push( { id: generateNewId(), name: productNameInput.value, detail: productDetailInput.value, price: productPriceInput.value, quantity: productQuantityInput.value, image: src } );
+        const { password, ...rest } = user;
+        localStorage.setItem( 'user', JSON.stringify( rest ) );
     }
+
+    if ( send )
+    {
+        try
+        {
+            user = JSON.parse( localStorage.getItem( 'user' ) );
+            await fetch( `${ "https://db-coderhouse-project.onrender.com" }/users/${ user.id }`, {
+                method: 'PUT',
+                body: JSON.stringify( user ), // data can be `string` or {object}!
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            } ).then( ( res ) => res.json() )
+                .catch( ( error ) => console.error( "Error:", error ) )
+                .then( ( response ) => console.log( "Success:", response ) );
+            printAlert( 'product-form', 'Product added successfully!!', false );
+
+            generateTableContent( true );
+        } catch ( error )
+        {
+            console.log( error );
+        }
+    }
+
 };
 
 function deleteEditProduct ( e )

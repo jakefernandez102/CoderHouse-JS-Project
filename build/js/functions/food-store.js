@@ -10,6 +10,20 @@ let token = '';
 
 let divProductItem = null;
 let divrestaurantProductContainer = null;
+let generateOrderButton = document.querySelector( '#generate-order' );
+generateOrderButton.setAttribute( "data-bs-toggle", "modal" );
+generateOrderButton.setAttribute( "href", "#exampleModalToggle" );
+generateOrderButton.addEventListener( 'click', () =>
+{
+    Toastify( {
+        text: "Visit Home to view your order details",
+        className: "info",
+        style: {
+            background: "linear-gradient(to right, #96c93d, #96c93d)",
+        }
+    } ).showToast();
+} );
+
 
 export async function showProductsByRestaurant ()
 {
@@ -58,7 +72,7 @@ function printProductsToDOM ()
                     divProductItem.setAttribute( 'data-product-id', product.id );
 
                     divProductItem.innerHTML = `
-                    <img src="https://c8.alamy.com/compes/2f4nkpn/fotografia-profesional-de-la-comida-diseno-de-la-vista-de-la-mesa-perfecto-para-su-sitio-web-revista-blog-de-la-comida-o-cualquier-cosa-que-usted-pueda-pensar-en-necesitarlo-para-2f4nkpn.jpg" alt="Producto 1">
+                    <img src="${ product.image }" alt="Producto 1">
                     <h3 class="product-title">${ product.name }</h3>
                     <p class="fs-6 fw-light d-block">${ product.detail }</p>
                     <p>Price: ${ formatMoney( parseInt( product.price ) ) }</p>
@@ -110,7 +124,6 @@ async function addProductToOrder ( e )
 
 };
 
-let productToUpdate;
 function addOrderToUser ( { actualUser, productId, restaurantId } )
 {
     const quantityInput = document.querySelector( '.product-quantity-order' );
@@ -197,7 +210,7 @@ export function fillCart ( actualUser, ulExists = false )
 
         liCart.innerHTML = `
                 <div class="cart-img">
-                    <img src="https://c8.alamy.com/compes/2f4nkpn/fotografia-profesional-de-la-comida-diseno-de-la-vista-de-la-mesa-perfecto-para-su-sitio-web-revista-blog-de-la-comida-o-cualquier-cosa-que-usted-pueda-pensar-en-necesitarlo-para-2f4nkpn.jpg" alt="">
+                    <img src="${ product.image }" alt="">
                 </div>
                 <div>
                     <p>${ product.name }</p>
