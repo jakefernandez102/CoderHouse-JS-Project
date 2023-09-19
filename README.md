@@ -27,13 +27,13 @@
 <br />
 <div align="center">
   <a href="https://coderhousejakefernandezproject.netlify.app">
-    <img src="./public/img/Logo.png" alt="Logo" width="80" height="80">
+    <img src="./build/img/chef_logo.svg" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">CoderHouse Final ReactJS Project</h3>
+  <h3 align="center">CoderHouse Final Vanilla JavaScript Project</h3>
 
   <p align="center">
-    Let me introduce you to JK'Store!
+    Let me introduce you to Mon-Key Restaurant!
     <br />
     <a href="https://github.com/jakefernandez102/CoderHouse-React-Vite-Project"><strong>Explore the repocitory »</strong></a>
     <br />
@@ -75,10 +75,10 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+![Alt text](image.png)
 
-JK'Store is a simulation of an e-commerce website where you can see bunch of different products and filter them by category.
-You can view the product details and if you like the product, you are able to add it to the shopping cart, however, to complete the purchase, you will need to register as one of our clients for us to have a certain metrics and follow up you and your interests.
+
+JK'Store is a simulation of an application where you will be able to register as seller of products or as a buyer to buy all the products that sellers add to their virtual restaurants.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -89,10 +89,9 @@ You can view the product details and if you like the product, you are able to ad
 This section should list any major frameworks/libraries used to bootstrap your project. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
 
 
-* [![React][React.js]][React-url]
-* [![Firebase][Firebase]][Firebase-url]
+* [![JavaScript][Javascript.js]][Javascript.js]
 * [![Bootstrap][Bootstrap.com]][Bootstrap-url]
-* [![Tailwind][Tailwind.com]][Tailwind-url]
+* [![Gulp][gulp.com]][gulp.com]
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -119,23 +118,14 @@ Below you will read how you can install and set up this app.
 
 1. Clone the repo
    ```sh
-   git clone https://github.com/jakefernandez102/JakeFernandez-React-Project-CoderHouse
+   git clone https://github.com/jakefernandez102/CoderHouse-JS-Project
    ```
 3. Install NPM packages
    ```sh
    npm install
    ```
-4. Enter FireBase variables in `.env`
-   ```js
-    VITE_API_PRODUCTS_URL=https://fakestoreapi.com/products
-    VITE_FIREBASE_APIKEY= "AIzaSyA7koI6f8C-wgETV7micMe7EYvqXX8cWd8"
-    VITE_FIREBASE_AUTHDOMAIN= "coderhouse-reactjs-project.firebaseapp.com"
-    VITE_FIREBASE_PROJECTID= "coderhouse-reactjs-project"
-    VITE_FIREBASE_STORAGEBUCKET= "coderhouse-reactjs-project.appspot.com"
-    VITE_FIREBASE_MESSAGINSENDERID= "429258425471"
-    VITE_FIREBASE_APPID= "1:429258425471:web:29246d602d86b71d73eb4a"
-   ```
-5. Now you can go to the console prompt and execute the command
+
+4. Now you can go to the console prompt and execute the command
    ```cmd
     npm run dev
    ```
@@ -147,64 +137,74 @@ Below you will read how you can install and set up this app.
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-1. You will see all products at the first instance, you will be able to see the product details and also you can add the product to the shopping cart, but you won't be able to complete the purchase until you register into out website.
+1. You will see a simple layout with a nice slogan, where you will be able to register by clicking the SignUp button or SigIn by clicking the SignIn button
 
-<div align="center">
-    <img src="./public/img/screenshot-usage1.png" alt="Logo">
-</div>
+![Alt text](image-1.png)
 
-2. To register, you have to click on Sign In button at top-right of the site.
+<br/>
 
-<div align="center">
-    <img src="./public/img/screenshot-usage-signIn.png" alt="Logo">
-</div>
+2. To register you have to introduce your full name, phone number, select what do you want to do in our web application, your email, and password to login.
+![Alt text](image-2.png)
 
-3. It will be a modal with the SignIn form, you will need to click on `Do not have an account? Sign Up` link
+<br/>
 
-<div align="center">
-    <img src="./public/img/screenshot-usageSignIn-Modal.png" alt="Logo">
-</div>
+3. Then you can signIn by providing the email and password you've used to register.
+![Alt text](image-3.png)
 
-3. It will be a modal with the SignUp form.
+<br/>
 
-<div align="center">
-    <img src="./public/img/screenshot-usage-SignUp-Modal.png" alt="Logo">
-</div>
+At the seller dashboard, you will see two options, the restaurant module where you'll be able to add restaurants and products to different restaurant you've added/
+![Alt text](image-4.png)
 
-4. After those both (Sign In or Sign Up) you will be redirect to the user informacion.
+<br/>
 
-<div align="center">
-    <img src="./public/img/Screenshot-usage-user-Info.png" alt="Logo">
-</div>
+4. Restaurant Module you have two options: 
+![Alt text](image-5.png)
+ <br/>
 
-4. Here you will be able to change any user info or change the foto.
+5. To add a product you have to add a restaurante name.
+![Alt text](image-6.png)
 
-<div align="center">
-    <img src="./public/img/screenshot-usage-change-picture.png" alt="Logo">
-    <img src="./public/img/screenshot-usage-updateUser.png" alt="Logo">
-</div>
+<br/>
 
-5. From here now you can add products to the cart and buy as you wish.
+6. then you will be able to add a product to the restaurant that you choose. You can add the product with the details just like in the following image.
+![Alt text](image-7.png)
 
-<div align="center">
-    <img src="./public/img/screenshot-usage-ProductDetail.png" alt="Logo">
-    <img src="./public/img/screenshot-usage-CartUpdated-status.png" alt="Logo">
-    <img src="./public/img/screenshot-usage-cartInventory.png" alt="Logo">
-</div>
+<br/>
 
-6. Once you have all the desired products in the cart, you can click on `Buy Now` button, you will be redirect to your purchase summary.
+7. In the Home module, you will see the summary of all the people that have bought in your restaurants.
+![Alt text](image-9.png)
 
-<div align="center">
-    <img src="./public/img/screenshot-usage-purchaseSumary2.png" alt="Logo">
-</div>
+<br/>
 
+8. If you register as a Buyer. like in the following image
+![Alt text](image-10.png)
 
-7. Finally, if you have purchased some other products from our site, you will be able to see your Order History
+<br/>
 
-<div align="center">
-    <img src="./public/img/screenshot-usage-Order-History.png" alt="Logo">
-    <img src="./public/img/screenshot-usage-Order-HistorySummary.png" alt="Logo">
-</div>
+9. You will be able to see three options, "Food Store", "Home", "Cart Icon". You will be able to buy the products that the sellers add in the Food Store module.
+![Alt text](image-11.png)
+
+<br/>
+
+10. As you can see here will be displayed the products of each restaurant that has been created before by the different sellers
+![Alt text](image-12.png)
+
+<br/>
+
+11. Once you click on Add Product button you will see a alert or flag at the top-right of the screen letting you know that the product has been added successfully to the cart.
+![Alt text](image-13.png)
+
+<br/>
+
+12. If you click the Cart Icon, you will see the list of products that you have added before.
+![Alt text](image-14.png)
+
+<br/>
+
+13. and finally the Home module is kind the same of the Seller's Home, a summary of products you've bought.
+![Alt text](image-15.png)
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -217,7 +217,7 @@ Below you will read how you can install and set up this app.
 - [x] List Product
 - [x] Add Product to Cart
 - [x] CRUD functionality
-- [x] FireBase functionality and resources
+- [x] Cloudinary for storage the images
     - [x] Read
     - [x] Write
 
@@ -245,7 +245,6 @@ Portfolio: [https://portfoliojakefernandez.netlify.app](https://portfoliojakefer
 * [Img Shields](https://shields.io)
 * [GitHub Pages](https://pages.github.com)
 * [HeroIcons](https://heroicons.com)
-* [React Icons](https://react-icons.github.io/react-icons/search)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -268,11 +267,8 @@ Portfolio: [https://portfoliojakefernandez.netlify.app](https://portfoliojakefer
 [linkedin-url]: https://www.linkedin.com/in/jake-fernandez-brizuela-73572222a/
 [github-url]: https://github.com/jakefernandez102
 [product-screenshot]: ./public/img/Screenshot-site.png
-[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
-[React-url]: https://reactjs.org/
+[Javascript.js]: https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E
 [Bootstrap.com]: https://img.shields.io/badge/bootstrap-%238511FA.svg?style=for-the-badge&logo=bootstrap&logoColor=white
 [Bootstrap-url]: https://getbootstrap.com
-[Tailwind.com]: https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white
-[Tailwind-url]: https://tailwindcss.com
-[Firebase]: https://img.shields.io/badge/firebase-%23039BE5.svg?style=for-the-badge&logo=firebase
-[Firebase-url]: https://console.firebase.google.com/
+[gulp.com]: https://img.shields.io/badge/GULP-%23CF4647.svg?style=for-the-badge&logo=gulp&logoColor=white
+

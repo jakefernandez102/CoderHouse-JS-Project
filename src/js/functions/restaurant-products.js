@@ -179,7 +179,7 @@ async function fillSelectRestaurant ()
 };
 
 
-export async function addProductToRestaurant ( send, src = '' )
+export async function addProductToRestaurant ( send, src = '/build/img/platillo3.webp' )
 {
 
     let productNameInput = document.querySelector( '#product-name' );
