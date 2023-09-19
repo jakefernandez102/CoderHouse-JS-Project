@@ -44,7 +44,7 @@ export async function generateScript ()
     productForm.addEventListener( 'submit', ( e ) =>
     {
         e.preventDefault();
-        addProductToRestaurant( true );
+        addProductToRestaurant();
         e.target.reset();
     }, false );
 }
@@ -85,6 +85,7 @@ function generateTableContent ( deleteProduct = false )
     {
         restaurant.products.forEach( ( product, idx ) =>
         {
+            console.log( product );
             tr = document.createElement( 'TR' );
             tr.innerHTML = `
 
@@ -104,7 +105,7 @@ function generateTableContent ( deleteProduct = false )
                 </td>
             `;
             tableBody.appendChild( tr );
-            tr.addEventListener( 'click', deleteEditProduct, false );
+            tr.addEventListener( 'click', ( e ) => deleteEditProduct( e ) );
         } );
     } );
 
@@ -178,8 +179,27 @@ async function fillSelectRestaurant ()
 
 };
 
+export const updateProductImage = ( src = '/build/img/platillo3.webp' ) =>
+{
+    let productNameInput = document.querySelector( '#product-name' );
+    let productDetailInput = document.querySelector( '#product-detail' );
+    let productPriceInput = document.querySelector( '#product-price' );
+    let productQuantityInput = document.querySelector( '#product-quantity' );
+    let productimage = document.querySelector( '#product-image-img' );
 
-export async function addProductToRestaurant ( send, src = '/build/img/platillo3.webp' )
+    if ( user.restaurants.some( restaurant => restaurant.products.some( product => product.name === productNameInput.value ) ) )
+    {
+        printAlert( 'product-form', 'Product already exists in the restaurant' );
+        return;
+    };
+
+    const restaurantToAddProduct = user?.restaurants?.filter( restaurant => restaurant.id === selectRestaurantInput.value )[0];
+    restaurantToAddProduct.products.push( { id: generateNewId(), name: productNameInput.value, detail: productDetailInput.value, price: productPriceInput.value, quantity: productQuantityInput.value, image: src } );
+    const { password, ...rest } = user;
+    localStorage.setItem( 'user', JSON.stringify( rest ) );
+};
+
+export async function addProductToRestaurant ()
 {
 
     let productNameInput = document.querySelector( '#product-name' );
@@ -190,50 +210,62 @@ export async function addProductToRestaurant ( send, src = '/build/img/platillo3
 
     if ( [productNameInput.value, productDetailInput.value, productPriceInput.value, productQuantityInput.value].includes( '' ) || selectRestaurantInput.value === '0' )
     {
+        console.log( 'ya existe bro' );
         printAlert( 'product-form', 'All fields are required' );
         return;
     }
 
-    if ( src !== '' )
+
+
+    const userLS = JSON.parse( localStorage.getItem( 'user' ) );
+    if ( !userLS )
     {
-        if ( user.restaurants.some( restaurant => restaurant.products.some( product => product.name === productNameInput.value ) ) )
-        {
-            printAlert( 'product-form', 'Product already exists in the restaurant' );
-            return;
-        };
         const restaurantToAddProduct = user?.restaurants?.filter( restaurant => restaurant.id === selectRestaurantInput.value )[0];
-        restaurantToAddProduct.products.push( { id: generateNewId(), name: productNameInput.value, detail: productDetailInput.value, price: productPriceInput.value, quantity: productQuantityInput.value, image: src } );
+        restaurantToAddProduct.products.push( { id: generateNewId(), name: productNameInput.value, detail: productDetailInput.value, price: productPriceInput.value, quantity: productQuantityInput.value, image: './build/img/platillo3.webp' } );
         const { password, ...rest } = user;
         localStorage.setItem( 'user', JSON.stringify( rest ) );
     }
+    // else
+    // {
+    //     if ( user.restaurants.some( restaurant => restaurant.products.some( product => product.name === productNameInput.value ) ) )
+    //     {
+    //         printAlert( 'product-form', 'Product already exists in the restaurant' );
+    //         return;
+    //     } else
+    //     {
+    //         const restaurantToAddProduct = user?.restaurants?.filter( restaurant => restaurant.id === selectRestaurantInput.value )[0];
+    //         restaurantToAddProduct.products.push( { id: generateNewId(), name: productNameInput.value, detail: productDetailInput.value, price: productPriceInput.value, quantity: productQuantityInput.value, image: './build/img/platillo3.webp' } );
+    //         const { password, ...rest } = user;
+    //         localStorage.setItem( 'user', JSON.stringify( rest ) );
+    //     }
+    // }
 
-    if ( send )
+
+    try
     {
-        try
-        {
-            user = JSON.parse( localStorage.getItem( 'user' ) );
-            await fetch( `${ process.env.DB_USERS_URL }/users/${ user.id }`, {
-                method: 'PUT',
-                body: JSON.stringify( user ), // data can be `string` or {object}!
-                headers: {
-                    "Content-Type": "application/json",
-                }
-            } ).then( ( res ) => res.json() )
-                .catch( ( error ) => console.error( "Error:", error ) )
-                .then( ( response ) => console.log( "Success:", response ) );
-            printAlert( 'product-form', 'Product added successfully!!', false );
+        user = JSON.parse( localStorage.getItem( 'user' ) );
+        await fetch( `${ process.env.DB_USERS_URL }/users/${ user.id }`, {
+            method: 'PUT',
+            body: JSON.stringify( user ), // data can be `string` or {object}!
+            headers: {
+                "Content-Type": "application/json",
+            }
+        } ).then( ( res ) => res.json() )
+            .catch( ( error ) => console.error( "Error:", error ) )
+            .then( ( response ) => console.log( "Success:", response ) );
+        printAlert( 'product-form', 'Product added successfully!!', false );
 
-            generateTableContent( true );
-        } catch ( error )
-        {
-            console.log( error );
-        }
+        generateTableContent( true );
+    } catch ( error )
+    {
+        console.log( error );
     }
 
 };
 
 function deleteEditProduct ( e )
 {
+    console.log( e.target.attributes['data-product-id'].value );
     if ( e.target.classList.contains( 'delete-button' ) )
     {
         deleteProduct( {
@@ -284,21 +316,27 @@ async function deleteProduct ( { productId, restaurantId } )
 }
 function editProduct ( { productId, restaurantId } )
 {
+    console.log( productId, restaurantId );
 
-    const fullNameSignUpInput = document.querySelector( '#name' );
-    const phoneNumberSignUpInput = document.querySelector( '#phone' );
-    const rolSignUpInput = document.querySelector( '#customer-rol' );
-    const emailSignUpInput = document.querySelector( '#email' );
-    const passwordSignUpInput = document.querySelector( '#password' );
+    let productNameInput = document.querySelector( '#product-name' );
+    let productDetailInput = document.querySelector( '#product-detail' );
+    let productPriceInput = document.querySelector( '#product-price' );
+    let productQuantityInput = document.querySelector( '#product-quantity' );
+    let productimage = document.querySelector( '#product-image-img' );
+
 
     let restaurantSelected = user?.restaurants?.find( restaurant => restaurant.id === restaurantId );
-    console.log( restaurantSelected );
     user?.restaurants?.forEach( ( restaurant ) =>
     {
         if ( restaurant.id === restaurantSelected.id )
         {
-            const updatedProducts = restaurantSelected?.products?.find( product => product.id !== productId );
+            const updatedProducts = restaurantSelected?.products?.find( product => product.id === productId );
             console.log( updatedProducts );
+            productNameInput.value = updatedProducts.name;
+            productDetailInput.value = updatedProducts.detail;
+            productPriceInput.value = updatedProducts.price;
+            productQuantityInput.value = updatedProducts.quantity;
+            productimage.src = updatedProducts.image;
         }
     } );
 }

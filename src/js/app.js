@@ -2,7 +2,7 @@
 
 import { validateUser, getUsersList } from "./Auth/auth.js";
 import { fillCart } from "./functions/food-store.js";
-import { addProductToRestaurant, validateRestaurant } from "./functions/restaurant-products.js";
+import { addProductToRestaurant, updateProductImage, validateRestaurant } from "./functions/restaurant-products.js";
 import { printAlert } from "./helpers/alert.js";
 import { formatMoney } from "./helpers/formater.js";
 import { generateNewId } from "./helpers/idGenerator.js";
@@ -201,7 +201,6 @@ function createNewUserSectionsButtons ()
                 productImageInput = document.querySelector( '#product-image' );
                 let productimage = document.querySelector( '#product-image-img' );
 
-                console.log( productimage );
                 widget_cloudinary = cloudinary.createUploadWidget( {
                     cloudName: "dhjfwuuol",
                     uploadPreset: 'preset_jake'
@@ -210,7 +209,7 @@ function createNewUserSectionsButtons ()
                 {
                     if ( !err && result && result.event === 'success' )
                     {
-                        addProductToRestaurant( false, result.info.secure_url );
+                        updateProductImage( result.info.secure_url );
                         productimage.src = result.info.secure_url;
                     }
                 } );
