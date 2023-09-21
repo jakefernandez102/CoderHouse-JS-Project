@@ -20,7 +20,7 @@ dotenv.config();
 
 function html ( done )
 {
-    src( 'src/*.html' )
+    src( './*.html' )
         .pipe( htmlmin( { collapseWhitespace: true } ) ) // Opcional: minificar el HTML
         .pipe( dest( 'dist' ) );
 
@@ -102,3 +102,4 @@ exports.versionWebp = versionWebp;
 exports.versionAvif = versionAvif;
 exports.replaceEnvVariables = replaceEnvVariables;
 exports.default = series( imagenes, versionWebp, versionAvif, css, pages, html, replaceEnvVariables, dev );
+exports.build = series( imagenes, versionWebp, versionAvif, css, pages, html, replaceEnvVariables );
