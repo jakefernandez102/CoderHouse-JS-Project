@@ -21,7 +21,6 @@ dotenv.config();
 function html ( done )
 {
     src( './*.html' )
-        .pipe( htmlmin( { collapseWhitespace: true } ) ) // Opcional: minificar el HTML
         .pipe( dest( 'dist' ) );
 
     done();
