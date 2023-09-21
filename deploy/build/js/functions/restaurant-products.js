@@ -8,8 +8,10 @@ let restaurantForm = null;
 let productForm = null;
 let restaurantInput = '';
 let selectRestaurantInput = '';
-let deleteButton = '';
-let editButton = '';
+let cloudinaryImage = '';
+
+let editProductId = '';
+let editRestaurantId = '';
 
 let user = {};
 let users = [];
@@ -44,8 +46,19 @@ export async function generateScript ()
     productForm.addEventListener( 'submit', ( e ) =>
     {
         e.preventDefault();
-        addProductToRestaurant();
-        e.target.reset();
+        let addEditProductButton = document.querySelector( '#add-edit-product-button' );
+        if ( addEditProductButton.attributes['data-function'].value === 'add' )
+        {
+            addProductToRestaurant();
+            e.target.reset();
+        } else if ( addEditProductButton.attributes['data-function'].value === 'edit' )
+        {
+            editProductOfRestaurant( editProductId, editRestaurantId );
+            addEditProductButton.attributes['data-function'].value = 'add';
+            addEditProductButton.textContent = 'Add product';
+            e.target.reset();
+        }
+
     }, false );
 }
 
@@ -85,7 +98,6 @@ function generateTableContent ( deleteProduct = false )
     {
         restaurant.products.forEach( ( product, idx ) =>
         {
-            console.log( product );
             tr = document.createElement( 'TR' );
             tr.innerHTML = `
 
@@ -167,7 +179,6 @@ export async function addRestaurant ( user, restaurantInput )
 async function fillSelectRestaurant ()
 {
 
-    console.log( user );
     user.restaurants.forEach( restaurant =>
     {
         const option = document.createElement( 'OPTION' );
@@ -181,22 +192,7 @@ async function fillSelectRestaurant ()
 
 export const updateProductImage = ( src = '/build/img/platillo3.webp' ) =>
 {
-    let productNameInput = document.querySelector( '#product-name' );
-    let productDetailInput = document.querySelector( '#product-detail' );
-    let productPriceInput = document.querySelector( '#product-price' );
-    let productQuantityInput = document.querySelector( '#product-quantity' );
-    let productimage = document.querySelector( '#product-image-img' );
-
-    if ( user.restaurants.some( restaurant => restaurant.products.some( product => product.name === productNameInput.value ) ) )
-    {
-        printAlert( 'product-form', 'Product already exists in the restaurant' );
-        return;
-    };
-
-    const restaurantToAddProduct = user?.restaurants?.filter( restaurant => restaurant.id === selectRestaurantInput.value )[0];
-    restaurantToAddProduct.products.push( { id: generateNewId(), name: productNameInput.value, detail: productDetailInput.value, price: productPriceInput.value, quantity: productQuantityInput.value, image: src } );
-    const { password, ...rest } = user;
-    localStorage.setItem( 'user', JSON.stringify( rest ) );
+    cloudinaryImage = src;
 };
 
 export async function addProductToRestaurant ()
@@ -215,30 +211,16 @@ export async function addProductToRestaurant ()
         return;
     }
 
-
-
-    const userLS = JSON.parse( localStorage.getItem( 'user' ) );
-    if ( !userLS )
+    if ( user.restaurants.some( restaurant => restaurant.products.some( product => product.name === productNameInput.value ) ) )
     {
-        const restaurantToAddProduct = user?.restaurants?.filter( restaurant => restaurant.id === selectRestaurantInput.value )[0];
-        restaurantToAddProduct.products.push( { id: generateNewId(), name: productNameInput.value, detail: productDetailInput.value, price: productPriceInput.value, quantity: productQuantityInput.value, image: './build/img/platillo3.webp' } );
-        const { password, ...rest } = user;
-        localStorage.setItem( 'user', JSON.stringify( rest ) );
-    }
-    // else
-    // {
-    //     if ( user.restaurants.some( restaurant => restaurant.products.some( product => product.name === productNameInput.value ) ) )
-    //     {
-    //         printAlert( 'product-form', 'Product already exists in the restaurant' );
-    //         return;
-    //     } else
-    //     {
-    //         const restaurantToAddProduct = user?.restaurants?.filter( restaurant => restaurant.id === selectRestaurantInput.value )[0];
-    //         restaurantToAddProduct.products.push( { id: generateNewId(), name: productNameInput.value, detail: productDetailInput.value, price: productPriceInput.value, quantity: productQuantityInput.value, image: './build/img/platillo3.webp' } );
-    //         const { password, ...rest } = user;
-    //         localStorage.setItem( 'user', JSON.stringify( rest ) );
-    //     }
-    // }
+        printAlert( 'product-form', 'Product already exists in the restaurant' );
+        return;
+    };
+
+    const restaurantToAddProduct = user?.restaurants?.filter( restaurant => restaurant.id === selectRestaurantInput.value )[0];
+    restaurantToAddProduct.products.push( { id: generateNewId(), name: productNameInput.value, detail: productDetailInput.value, price: productPriceInput.value, quantity: productQuantityInput.value, image: cloudinaryImage === '' ? './build/img/platillo3.webp' : cloudinaryImage } );
+    const { password, ...rest } = user;
+    localStorage.setItem( 'user', JSON.stringify( rest ) );
 
 
     try
@@ -265,7 +247,6 @@ export async function addProductToRestaurant ()
 
 function deleteEditProduct ( e )
 {
-    console.log( e.target.attributes['data-product-id'].value );
     if ( e.target.classList.contains( 'delete-button' ) )
     {
         deleteProduct( {
@@ -289,11 +270,10 @@ async function deleteProduct ( { productId, restaurantId } )
         if ( restaurant.id === restaurantSelected.id )
         {
             const updatedProducts = restaurantSelected?.products?.filter( product => product.id !== productId );
-            console.log( updatedProducts );
             restaurant.products = [...updatedProducts];
         }
     } );
-
+    localStorage.setItem( 'user', JSON.stringify( user ) );
     try
     {
         await fetch( `${ "https://db-coderhouse-project.onrender.com" }/users/${ user.id }`, {
@@ -316,7 +296,15 @@ async function deleteProduct ( { productId, restaurantId } )
 }
 function editProduct ( { productId, restaurantId } )
 {
-    console.log( productId, restaurantId );
+    const selectValue = user.restaurants.filter( restaurant => restaurant.id === restaurantId );
+
+    selectRestaurantInput.value = selectValue[0].id;
+    let addEditProductButton = document.querySelector( '#add-edit-product-button' );
+    addEditProductButton.textContent = 'Edit Product';
+    addEditProductButton.attributes['data-function'].value = 'edit';
+
+    editProductId = productId;
+    editRestaurantId = restaurantId;
 
     let productNameInput = document.querySelector( '#product-name' );
     let productDetailInput = document.querySelector( '#product-detail' );
@@ -324,19 +312,78 @@ function editProduct ( { productId, restaurantId } )
     let productQuantityInput = document.querySelector( '#product-quantity' );
     let productimage = document.querySelector( '#product-image-img' );
 
+    let restaurantSelected = user?.restaurants?.find( restaurant => restaurant.id === restaurantId );
+    user?.restaurants?.forEach( ( restaurant ) =>
+    {
+        if ( restaurant.id === restaurantSelected.id )
+        {
+            let updatedProducts = restaurantSelected?.products?.find( product => product.id === productId );
+            productNameInput.value = updatedProducts.name;
+            productDetailInput.value = updatedProducts.detail;
+            productPriceInput.value = updatedProducts.price;
+            productQuantityInput.value = updatedProducts.quantity;
+            productimage.src = updatedProducts.image;
+
+        }
+    } );
+
+}
+
+const editProductOfRestaurant = async ( productId, restaurantId ) =>
+{
+    console.log( productId, restaurantId );
+    let productNameInput = document.querySelector( '#product-name' );
+    let productDetailInput = document.querySelector( '#product-detail' );
+    let productPriceInput = document.querySelector( '#product-price' );
+    let productQuantityInput = document.querySelector( '#product-quantity' );
+    let productimage = document.querySelector( '#product-image-img' );
+
+    let updatedProduct = {};
+    let updatedProducts = [];
 
     let restaurantSelected = user?.restaurants?.find( restaurant => restaurant.id === restaurantId );
     user?.restaurants?.forEach( ( restaurant ) =>
     {
         if ( restaurant.id === restaurantSelected.id )
         {
-            const updatedProducts = restaurantSelected?.products?.find( product => product.id === productId );
-            console.log( updatedProducts );
-            productNameInput.value = updatedProducts.name;
-            productDetailInput.value = updatedProducts.detail;
-            productPriceInput.value = updatedProducts.price;
-            productQuantityInput.value = updatedProducts.quantity;
-            productimage.src = updatedProducts.image;
+            updatedProducts = restaurantSelected?.products?.map( product =>
+            {
+                if ( product.id === productId )
+                {
+                    updatedProduct = {
+                        id: product.id,
+                        detail: productDetailInput.value,
+                        image: productimage.src,
+                        name: productNameInput.value,
+                        price: productPriceInput.value,
+                        quantity: productQuantityInput.value
+                    };
+                    return updatedProduct;
+                }
+                return product;
+            } );
+            restaurantSelected.products = [...updatedProducts];
+            restaurant = restaurantSelected;
+            ( restaurant );
         }
     } );
-}
+    console.log( user );
+    try
+    {
+        await fetch( `${ "https://db-coderhouse-project.onrender.com" }/users/${ user.id }`, {
+            method: 'PUT',
+            body: JSON.stringify( user ), // data can be `string` or {object}!
+            headers: {
+                "Content-Type": "application/json",
+            },
+            redirect: 'manual'
+        } ).then( ( res ) => res.json() )
+            .catch( ( error ) => console.error( "Error:", error ) )
+            .then( ( response ) => console.log( "Success:", response ) );
+        generateTableContent( true );
+
+    } catch ( error )
+    {
+        console.log( error );
+    }
+};

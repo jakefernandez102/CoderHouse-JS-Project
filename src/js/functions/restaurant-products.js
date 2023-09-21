@@ -219,8 +219,8 @@ export async function addProductToRestaurant ()
 
     const restaurantToAddProduct = user?.restaurants?.filter( restaurant => restaurant.id === selectRestaurantInput.value )[0];
     restaurantToAddProduct.products.push( { id: generateNewId(), name: productNameInput.value, detail: productDetailInput.value, price: productPriceInput.value, quantity: productQuantityInput.value, image: cloudinaryImage === '' ? './build/img/platillo3.webp' : cloudinaryImage } );
-    const { password, ...rest } = user;
-    localStorage.setItem( 'user', JSON.stringify( rest ) );
+
+    localStorage.setItem( 'user', JSON.stringify( user ) );
 
 
     try
