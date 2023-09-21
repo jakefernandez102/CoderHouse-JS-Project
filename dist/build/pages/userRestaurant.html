@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>userRestaurant</title>
+
+</head>
+<body>
+    <header class="user-restaurant-header">
+        <h1>Manage Restaurants and Products</h1>
+        <p>Add new restaurants and products to sell</p>
+    </header>
+    <div class="container">
+            <div class="d-flex flex-column gap-3">
+                <!-- <div class="toggle-buttons">
+                    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2">Add Products for your restaurant</button>
+                    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Add Restaurant to your domain</>
+                </div> -->
+                <div class="row">
+                    <div class="toggle-buttons">
+                        <button class="btn btn-warning fs-2 " type="button" data-bs-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Add Restaurant to your domain</>
+                    </div>
+                    <div class="col">
+                        <div class="collapse multi-collapse" id="multiCollapseExample1">
+                            <div class="restaurant-form">
+                                <h2>Add Restaurant</h2>
+                                <form id="restaurantForm" class="restaurantForm" >
+                                    <div class="form-group">
+                                        <label for="restaurant-name">Restaurante's Name:</label>
+                                        <input type="text" id="restaurant-name" name="restaurant-name"/>
+                                    </div>
+                                    <button  type="submit">Add Restaurant</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="toggle-buttons">
+                        <button class="btn btn-warning fs-2" type="button" data-bs-toggle="collapse" data-bs-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2">Add Products for your restaurant</button>
+                    </div>
+                    <div class="col">
+                        <div class="collapse multi-collapse" id="multiCollapseExample2">
+
+                            <div class="product-form">
+                                <h2>Add Product</h2>
+                                <form id="product-form">
+                                    <div class="form-group">
+                                        <label for="select-restaurant">Select the restaurant:</label>
+                                        <select class="form-control text-center fs-2" name="select-restaurant" id="select-restaurant">
+                                            <option value="0" selected disabled>-- Select --</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="product-name">Product Name:</label>
+                                        <input type="text" id="product-name" name="product-name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="product-detail">Product Details:</label>
+                                        <textarea maxlength="50" name="product-detail" id="product-detail" class="form-control"></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="product-price">Product Price:</label>
+                                        <input type="number" id="product-price" name="product-price" step="0.01">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="product-quantity">Product Quantity:</label>
+                                        <input type="number" id="product-quantity" name="product-price" step="1">
+                                    </div>
+                                    <div class="d-inline-block">
+                                        <label for="product-image">Product Image:</label>
+                                        <img class="d-block" id='product-image-img' src="../../build/img/platillo3.webp" width="100" height="100" alt="product img">
+                                    </div>
+                                    <div class="form-group">
+                                        <!-- <input class="form-control" type="file" id="product-image" name="image" accept="image/png, image/jpeg, image/jpg"  > -->
+                                        <button type="button" id="product-image">Upload Image</button>
+                                    </div>
+                                    <button id="add-edit-product-button" data-function="add" type="submit">Add Product</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <table class="table table-products table-warning table-striped table-hover" id="products-table">
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+</body>
+</html>

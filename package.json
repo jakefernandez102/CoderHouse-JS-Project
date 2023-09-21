@@ -35,6 +35,19 @@
   "dependencies": {
     "cloudinary": "^1.40.0",
     "dotenv": "^16.3.1",
-    "json-server": "^0.17.3"
+    "gulp-htmlmin": "^5.0.1",
+    "json-server": "^0.17.3",
+    "autoprefixer": "^10.4.14",
+    "gulp": "^4.0.2",
+    "gulp-avif": "^1.1.1",
+    "gulp-imagemin": "^7.1.0",
+    "gulp-nano": "^1.0.7",
+    "gulp-plumber": "^1.2.1",
+    "gulp-postcss": "^9.0.1",
+    "gulp-replace": "^1.1.4",
+    "gulp-sass": "^5.1.0",
+    "gulp-sourcemaps": "^3.0.0",
+    "gulp-webp": "^4.0.1",
+    "sass": "^1.64.2"
   }
 }

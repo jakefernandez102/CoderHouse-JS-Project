@@ -28,7 +28,7 @@ export async function getUsersList ()
         const response = await fetch( `${ "https://db-coderhouse-project.onrender.com" }/users` );
         const data = await response.json();
         users = await data;
-
+        console.log( users );
         return users;
     } catch ( error )
     {
@@ -39,6 +39,7 @@ export async function getUsersList ()
 
 const validateSignIn = ( user, requestedForm ) =>
 {
+
     if ( user.email === '' || user.password === '' )
     {
         const formUsed = document.querySelector( requestedForm ).classList[0];
@@ -83,6 +84,7 @@ const validateSignUp = async ( user, requestedForm ) =>
 
 const createUser = async ( user, requestedForm ) =>
 {
+    console.log( user );
     const formUsed = document.querySelector( requestedForm ).classList[0];
     const token = generateUserToken();
     let userToCreate = {};
@@ -135,6 +137,7 @@ async function signInAccount ( e )
     {
         printAlert( fromSignInButton.classList[0], 'All fields are required' );
     }
+    console.log( users );
     if ( !users.some( user => user.email === emailInput && user.password === passwordInput ) )
     {
         printAlert( fromSignInButton.classList[0], 'Email or password are wrong!!!' );

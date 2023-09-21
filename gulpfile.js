@@ -7,7 +7,7 @@ const autoprefixer = require( 'autoprefixer' );
 const plumber = require( 'gulp-plumber' );
 const sourcemaps = require( 'gulp-sourcemaps' );
 const cssnano = require( 'gulp-nano' );
-
+const htmlmin = require( 'gulp-htmlmin' );
 //imagenes
 const imagemin = require( 'gulp-imagemin' );
 const webp = require( 'gulp-webp' );
@@ -18,6 +18,15 @@ const dotenv = require( 'dotenv' );
 
 dotenv.config();
 
+function html ( done )
+{
+    src( 'src/*.html' )
+        .pipe( htmlmin( { collapseWhitespace: true } ) ) // Opcional: minificar el HTML
+        .pipe( dest( 'dist' ) );
+
+    done();
+}
+
 function css ( done )
 {
 
@@ -27,7 +36,7 @@ function css ( done )
         .pipe( sass() )
         .pipe( postcss( [autoprefixer()] ) )
         .pipe( sourcemaps.write( '.' ) )
-        .pipe( dest( 'build/css' ) );
+        .pipe( dest( 'dist/build/css' ) );
 
     done();
 }
@@ -36,26 +45,26 @@ function imagenes ()
 {
     return src( './src/img/**/*' )
         .pipe( imagemin( { optimizationLevel: 3 } ) )
-        .pipe( dest( 'build/img' ) );
+        .pipe( dest( 'dist/build/img' ) );
 }
 
 function pages ()
 {
     return src( './src/pages/**/*.html' )
-        .pipe( dest( 'build/pages' ) );
+        .pipe( dest( 'dist/build/pages' ) );
 }
 
 function versionWebp ()
 {
     return src( './src/img/**/*.{jpg,png,PNG}' )
         .pipe( webp() )
-        .pipe( dest( 'build/img' ) );
+        .pipe( dest( 'dist/build/img' ) );
 }
 function versionAvif ()
 {
     return src( './src/img/**/*.{jpg,png,PNG}' )
         .pipe( avif() )
-        .pipe( dest( 'build/img' ) );
+        .pipe( dest( 'dist/build/img' ) );
 }
 
 const envConfig = {
@@ -72,7 +81,7 @@ function replaceEnvVariables ()
         .pipe( replace( 'process.env.CLOUD_NAME', JSON.stringify( envConfig.cloudName ) ) )
         .pipe( replace( 'process.env.API_KEY', JSON.stringify( envConfig.apiKey ) ) )
         .pipe( replace( 'process.env.API_SECRET', JSON.stringify( envConfig.apiSecret ) ) )
-        .pipe( dest( 'build' ) );
+        .pipe( dest( 'dist/build' ) );
 }
 
 function dev ( done )
@@ -84,6 +93,7 @@ function dev ( done )
     done();
 }
 
+exports.html = html;
 exports.pages = pages;
 exports.css = css;
 exports.dev = dev;
@@ -91,4 +101,4 @@ exports.imagenes = imagenes;
 exports.versionWebp = versionWebp;
 exports.versionAvif = versionAvif;
 exports.replaceEnvVariables = replaceEnvVariables;
-exports.default = series( imagenes, versionWebp, versionAvif, css, pages, replaceEnvVariables, dev );
+exports.default = series( imagenes, versionWebp, versionAvif, css, pages, html, replaceEnvVariables, dev );
